@@ -45,7 +45,7 @@ else:
 
     # 调用合约函数（例如获取合约的名称）
     # try:
-    create_Collectible = contract.functions.createCollectible("H:\PhD\Projects\web3\metadata\metadata.json").call()
+    create_Collectible = contract.functions.createCollectible("https://github.com/pzy2000/NFT_web3/blob/master/metadata/metadata.json").call()
     # symbol = contract.functions.symbol().call()
     # total_supply = contract.functions.totalSupply().call()
     print(f"Contract createCollectible: {create_Collectible}")

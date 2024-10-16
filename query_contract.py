@@ -10,12 +10,12 @@ local_url = 'http://127.0.0.1:8545'
 w3 = Web3(Web3.HTTPProvider(local_url))
 
 # 合约ABI
-with open("SimpleNFT.sol", "r") as file:
+with open("contracts/management_storage.sol", "r", encoding='utf-8') as file:
     simple_nft_file = file.read()
 compiled_sol = compile_standard(
     {
         "language": "Solidity",
-        "sources": {"SimpleNFT.sol": {"content": simple_nft_file}},
+        "sources": {"management_storage.sol": {"content": simple_nft_file}},
         "settings": {
             "outputSelection": {
                 "*": {
@@ -24,14 +24,14 @@ compiled_sol = compile_standard(
             }
         },
     },
-    allow_paths=[".", "./@openzeppelin/contracts"]
+    allow_paths=["."]
 )
 
-abi = compiled_sol['contracts']['SimpleNFT.sol']['SimpleCollectible']['abi']
+abi = compiled_sol['contracts']['management_storage.sol']['MultiModalStorageManager']['abi']
 # pprint.pprint(abi)
 
 # 已部署合约地址
-contract_address = '0x03a9672f16b262d27c8389180b9a720ea9bfcb57'
+contract_address = '0xb8c9cAF72d14657e87b155043d1B5B6918Ca7F83'
 
 # 实例化合约对象
 contract = w3.eth.contract(address=w3.to_checksum_address(contract_address), abi=abi)
@@ -45,10 +45,10 @@ else:
 
     # 调用合约函数（例如获取合约的名称）
     # try:
-    create_Collectible = contract.functions.createCollectible("https://github.com/pzy2000/NFT_web3/blob/master/metadata/metadata.json").call()
+    # create_Collectible = contract.functions.createCollectible("https://ipfs.io/ipfs/QmZisePpoj1ckiUeXxxj9MLKdan5jSPJAsWuGqwwXwbDgf?filename=metadata.json").call()
     # symbol = contract.functions.symbol().call()
     # total_supply = contract.functions.totalSupply().call()
-    print(f"Contract createCollectible: {create_Collectible}")
+    # print(f"Contract createCollectible: {create_Collectible}")
     # print(f"Contract Symbol: {symbol}")
     # print(f"Total Supply: {total_supply}")
     # except Exception as e:

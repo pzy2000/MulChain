@@ -1,0 +1,6 @@
+web3==6.20.1
+ipfshttpclient==0.7.0
+Pillow==9.3.0
+imageio==2.19.3
+imageio-ffmpeg==0.5.1
+py-solc-x==2.0.3

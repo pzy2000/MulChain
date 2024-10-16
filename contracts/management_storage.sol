@@ -41,11 +41,11 @@ contract MultiModalStorageManager {
         bPlusTreeNodes[rootId] = BPlusTreeNode({
             isLeaf: true,
             keys: new uint256[](0),
-            children: new uint256 ,
-            dataEntryIds: new uint256
+            children: new uint256[](0),
+            dataEntryIds: new uint256[](0)
         });
         nodeCount++;
-        emit NodeCreated(rootId, true, new uint256 );
+        emit NodeCreated(rootId, true, new uint256[](0));
     }
 
     // 存储数据的方法，返回存储数据的条目ID

@@ -370,8 +370,8 @@ def main():
         block_size = block_sizes[j]
         print(f"----- Starting test for {block_size} blocks -----")
         for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
-            text_hash = data_list[j]['hash']
-            time_stamp = data_list[j]['time_stamp']
+            text_hash = data_list[i]['hash']
+            time_stamp = data_list[i]['time_stamp']
             image_path = "sample_image.jpg"  # 请替换为实际图片路径
             video_path = "sample_video.mp4"  # 请替换为实际视频路径
             insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"

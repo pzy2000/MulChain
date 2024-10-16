@@ -59,6 +59,7 @@ class SQLMiddleware:
 
         if table_name.lower() == 'multimodal_data':
             text_hash, image_path, video_path, timestamp = values
+
             # print("parse completed")
             # 记录索引构建开始时间
             index_start_time = time.time()
@@ -68,12 +69,8 @@ class SQLMiddleware:
                 if image_path not in self.ipfs_cache or video_path not in self.ipfs_cache:
                     image_cid = self.ipfs.add(image_path)['Hash']
                     video_cid = self.ipfs.add(video_path)['Hash']
-                    self.ipfs_cache[image_path] = {
-                        "image_cid": image_cid,
-                    }
-                    self.ipfs_cache[video_path] = {
-                        "video_cid": video_cid,
-                    }
+                    self.ipfs_cache[image_path] = image_cid
+                    self.ipfs_cache[video_path] = video_cid
                 else:
                     image_cid = self.ipfs_cache.get(image_path)
                     video_cid = self.ipfs_cache.get(video_path)
@@ -83,9 +80,16 @@ class SQLMiddleware:
                 video_cid = "0"
             index_off_start_time = time.time()
 
-
             # 调用区块链合约的 storeData 方法并记录区块生成时间
             block_start_time = time.time()
+            # print("text_hash", text_hash)
+            # print("type", type(text_hash))
+            # print("image_cid", image_cid)
+            # print("type", type(image_cid))
+            # print("video_cid", video_cid)
+            # print("type", type(video_cid))
+            # print("timestamp", timestamp)
+            # print("type", type(timestamp))
             tx_hash = self.contract.functions.storeData(text_hash, image_cid, video_cid, timestamp).transact()
             # 手动生成新区块
             block_end_time = time.time()
@@ -109,39 +113,72 @@ class SQLMiddleware:
                 print("Error", "Transaction failed!")
             return f"Data inserted with transaction hash: {tx_receipt.transactionHash.hex()}"
 
+    def extract_time_range(self, condition):
+        # 提取 BETWEEN 子句中的时间范围
+        match = re.search(r'BETWEEN\s*\'([^\']*)\'\s*AND\s*\'([^\']*)\'', condition, re.IGNORECASE)
+        if match:
+            return match.group(1), match.group(2)
+        else:
+            raise ValueError("Invalid BETWEEN clause in SELECT statement.")
+
     def handle_select(self, parsed):
         # 解析 SELECT 查询并进行数据查询
         table_name, condition = self.extract_select_conditions(parsed)
 
         if table_name.lower() == 'multimodal_data':
-            entry_id = int(condition.split('=')[1].strip())
-            # 使用布隆过滤器加速查询
-            if str(entry_id) in self.bloom_filter:
-                # print("enter bloom")
-                # 如果在布隆过滤器中，返回缓存的数据
-                cached_data = self.cached_data.get(str(entry_id), None)
-                # print("cache_data", cached_data)
-                if cached_data:
-                    return cached_data
+            # 检查是否是时间范围查询
+            if 'BETWEEN' in condition.upper():
+                start_time, end_time = self.extract_time_range(condition)
+                results = []
+                for entry_id, entry in self.cached_data.items():
+                    if start_time <= entry['timestamp'] <= end_time:
+                        results.append(entry)
+                if results:
+                    return results
                 else:
-                    return "Data not found in cached storage."
+                    # 如果缓存中没有符合条件的数据，则从区块链中查询
+                    results = []
+                    for entry_id in range(self.contract.functions.entryCount().call()):
+                        data = self.contract.functions.getData(entry_id).call()
+                        if start_time <= data[3] <= end_time:
+                            self.cached_data[str(entry_id)] = {
+                                "text_hash": data[0],
+                                "image_cid": data[1],
+                                "video_cid": data[2],
+                                "timestamp": data[3]
+                            }
+                            results.append(self.cached_data[str(entry_id)])
+                    return results
             else:
-                # 如果不在布隆过滤器中，去区块链查询
-                data = self.contract.functions.getData(entry_id).call()
-                # 将查询到的数据添加到布隆过滤器和缓存中
-                self.bloom_filter.add(str(entry_id))
-                self.cached_data[str(entry_id)] = {
-                    "text_hash": data[0],
-                    "image_cid": data[1],
-                    "video_cid": data[2],
-                    "timestamp": data[3]
-                }
-                try:
-                    image_path = self.ipfs.get(data[1], target=f"./cache/{data[1]}")
-                    video_path = self.ipfs.get(data[2], target=f"./cache/{data[2]}")
-                except Exception as e:
-                    print(e)
-                return self.cached_data[str(entry_id)]
+                # 单条记录查询
+                entry_id = int(condition.split('=')[1].strip())
+                # 使用布隆过滤器加速查询
+                if str(entry_id) in self.bloom_filter:
+                    # print("enter bloom")
+                    # 如果在布隆过滤器中，返回缓存的数据
+                    cached_data = self.cached_data.get(str(entry_id), None)
+                    # print("cache_data", cached_data)
+                    if cached_data:
+                        return cached_data
+                    else:
+                        return "Data not found in cached storage."
+                else:
+                    # 如果不在布隆过滤器中，去区块链查询
+                    data = self.contract.functions.getData(entry_id).call()
+                    # 将查询到的数据添加到布隆过滤器和缓存中
+                    self.bloom_filter.add(str(entry_id))
+                    self.cached_data[str(entry_id)] = {
+                        "text_hash": data[0],
+                        "image_cid": data[1],
+                        "video_cid": data[2],
+                        "timestamp": data[3]
+                    }
+                    try:
+                        image_path = self.ipfs.get(data[1], target=f"./cache/{data[1]}")
+                        video_path = self.ipfs.get(data[2], target=f"./cache/{data[2]}")
+                    except Exception as e:
+                        print(e)
+                    return self.cached_data[str(entry_id)]
 
     def handle_update(self, parsed):
         # 解析 UPDATE 查询并进行数据更新
@@ -315,8 +352,9 @@ def main():
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
     # 逐步增加块的数量，从 256 到 16384
-    # block_sizes = [256, 512, 1024]
-    block_sizes = [256]
+    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
+
+    # block_sizes = [256]
 
     # 定义要遍历的根目录
     root_dir = '../bitcoin'
@@ -335,7 +373,6 @@ def main():
 
     # 创建一个空的列表来保存提取的结果
     data_list = []
-
     # 遍历文件列表，添加进度条显示
     for file_path in tqdm(file_list, desc="Processing JSON files"):
         # 打开并读取 JSON 文件内容
@@ -368,44 +405,82 @@ def main():
                 print(f"Error decoding JSON from file: {file_path}")
 
     print(f"Total JSON files processed: {len(data_list)}")
+    with open("AAA_TIME_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
 
-    for j in range(0, len(block_sizes)):
-        entry_id = 0
-        block_size = block_sizes[j]
-        print(f"----- Starting test for {block_size} blocks -----")
-        for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
-            text_hash = data_list[j]['hash']
-            time_stamp = data_list[j]['time_stamp']
-            image_path = "sample_image.jpg"  # 请替换为实际图片路径
-            video_path = "sample_video.mp4"  # 请替换为实际视频路径
-            insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
-            sql_middleware.parse_query(insert_query)
-            # 构建 SELECT 查询并调用 parse_query
-            select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{data_list[block_sizes[i]]['time_stamp']}' AND '{data_list[block_sizes[i]]['time_stamp']}'"
-            sql_middleware.parse_query(select_query)
+        for j in range(0, len(block_sizes)):
+            entry_id = 0
+            block_size = block_sizes[j]
+            print(f"----- Starting test for {block_size} blocks -----")
+            fw.write(f"----- Starting test for {block_size} blocks -----")
+            fw.write("\n")
+            for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
+                text_hash = data_list[i]['hash']
+                time_stamp = data_list[i]['time_stamp']
+                image_path = "sample_image.jpg"  # 请替换为实际图片路径
+                video_path = "sample_video.mp4"  # 请替换为实际视频路径
+                insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
+                sql_middleware.parse_query(insert_query)
+                # 构建 SELECT 查询并调用 parse_query
+                select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{data_list[i]['time_stamp']}' AND '{data_list[i]['time_stamp']}'"
+                # print(sql_middleware.parse_query(select_query))
+                sql_middleware.parse_query(select_query)
 
-        # 输出统计数据
-        avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
-        avg_block_generation_time = sum(sql_middleware.block_generation_times) / len(
-            sql_middleware.block_generation_times)
-        avg_index_storage_cost = sum(sql_middleware.index_storage_costs) / len(sql_middleware.index_storage_costs)
+            # 输出统计数据
+            avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
+            avg_block_generation_time = sum(sql_middleware.block_generation_times) / len(
+                sql_middleware.block_generation_times)
+            avg_index_storage_cost = sum(sql_middleware.index_storage_costs) / len(sql_middleware.index_storage_costs)
 
-        print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
+            print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
+            fw.write(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
 
-        print(
-            f"On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times):.4f} seconds")
+            print(
+                f"On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times):.4f} seconds")
+            fw.write(
+                f"On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times):.4f} seconds")
+            fw.write("\n")
 
-        print(
-            f"Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times):.4f} seconds")
+            print(
+                f"Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times):.4f} seconds")
+            fw.write(
+                f"Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times):.4f} seconds")
+            fw.write("\n")
 
-        print(f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.4f} MB")
+            print(f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
+            fw.write(f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
+            fw.write("\n")
 
-        # 重置统计数据
-        sql_middleware.index_building_times.clear()
-        sql_middleware.block_generation_times.clear()
-        sql_middleware.index_storage_costs.clear()
-        sql_middleware.on_chain_index_building_times.clear()
-        entry_id += 1
+            # print(
+            #     f"avg Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times):.4f} seconds")
+            print(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
+            fw.write(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
+            fw.write("\n")
+
+            print(
+                f"avg On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times) / len(sql_middleware.on_chain_index_building_times):.4f} seconds")
+            fw.write(
+                f"avg On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times) / len(sql_middleware.on_chain_index_building_times):.4f} seconds")
+            fw.write("\n")
+
+            # print(
+            #     f"avg Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times) / len(sql_middleware.block_generation_times):.6f} seconds")
+            print(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
+            fw.write(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
+            fw.write("\n")
+
+            # print(
+            # f"avg Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024 / len(sql_middleware.index_storage_costs):.8f} MB")
+            print(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
+            fw.write(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
+            fw.write("\n")
+
+            # 重置统计数据
+            sql_middleware.index_building_times.clear()
+            sql_middleware.block_generation_times.clear()
+            sql_middleware.index_storage_costs.clear()
+            sql_middleware.on_chain_index_building_times.clear()
+            entry_id += 1
+    # fw.close()
 
 
 if __name__ == "__main__":

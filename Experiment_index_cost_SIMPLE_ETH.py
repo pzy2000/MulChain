@@ -462,15 +462,29 @@ def main():
     #             print(f"Error decoding JSON from file: {file_path}")
     #
     # print(f"Total JSON files processed: {len(data_list)}")
-    import pickle
-
-    with open('data_list.pkl', 'rb') as f:
-        data_list = pickle.load(f)
+    # import pickle
+    #
+    # with open('data_list.pkl', 'rb') as f:
+    #     data_list = pickle.load(f)
 
     # 验证是否成功读取
+    import pandas as pd
+    from datetime import datetime
+
+    # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
+    df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
+
+    # 将数据转换为指定格式的列表，并格式化时间戳为 %Y-%m-%d
+    data_list = [
+        {
+            'hash': row['transactionHash'],
+            'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d')
+        }
+        for _, row in df.iterrows()
+    ]
     print(f"Loaded {len(data_list)} items from data_list.pkl")
 
-    with open("AAA_SIMPLE_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+    with open("AAA_SIMPLE_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):
             # entry_id = 0
             block_size = block_sizes[j]

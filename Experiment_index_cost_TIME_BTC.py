@@ -433,6 +433,7 @@ def main():
 
             print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
             fw.write(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
+            fw.write("\n")
 
             print(
                 f"On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times):.4f} seconds")

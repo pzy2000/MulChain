@@ -473,10 +473,10 @@ def main():
             fw.write("\n")
 
             # 重置统计数据
-            sql_middleware.index_building_times.clear()
-            sql_middleware.block_generation_times.clear()
-            sql_middleware.index_storage_costs.clear()
-            sql_middleware.on_chain_index_building_times.clear()
+            # sql_middleware.index_building_times.clear()
+            # sql_middleware.block_generation_times.clear()
+            # sql_middleware.index_storage_costs.clear()
+            # sql_middleware.on_chain_index_building_times.clear()
             entry_id += 1
 
 

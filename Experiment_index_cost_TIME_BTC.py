@@ -81,13 +81,13 @@ class SQLMiddleware:
 
             # 调用区块链合约的 storeData 方法并记录区块生成时间
             block_start_time = time.time()
-            print("text_hash", text_hash)
+            # print("text_hash", text_hash)
             # print("type", type(text_hash))
-            print("image_cid", image_cid)
+            # print("image_cid", image_cid)
             # print("type", type(image_cid))
-            print("video_cid", video_cid)
+            # print("video_cid", video_cid)
             # print("type", type(video_cid))
-            print("timestamp", timestamp)
+            # print("timestamp", timestamp)
             # print("type", type(timestamp))
             tx_hash = self.contract.functions.storeData(text_hash, image_cid, video_cid, timestamp).transact()
             # 手动生成新区块

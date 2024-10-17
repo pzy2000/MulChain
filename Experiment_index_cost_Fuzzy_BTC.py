@@ -462,7 +462,7 @@ def main():
     with open("AAA_Fuzzy_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
 
         for j in range(0, len(block_sizes)):
-            entry_id = 0
+            # entry_id = 0
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")
@@ -536,11 +536,11 @@ def main():
             fw.write("\n")
 
             # 重置统计数据
-            sql_middleware.index_building_times.clear()
-            sql_middleware.block_generation_times.clear()
-            sql_middleware.index_storage_costs.clear()
-            sql_middleware.on_chain_index_building_times.clear()
-            entry_id += 1
+            # sql_middleware.index_building_times.clear()
+            # sql_middleware.block_generation_times.clear()
+            # sql_middleware.index_storage_costs.clear()
+            # sql_middleware.on_chain_index_building_times.clear()
+            # entry_id += 1
     # fw.close()
 
 

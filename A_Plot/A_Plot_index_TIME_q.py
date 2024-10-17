@@ -36,7 +36,6 @@ fig, axs = plt.subplots(1, 2, figsize=(16, 6), dpi=666)
 bar1 = [value - w for value, w in zip(x, widths_bar)]  # 左侧的柱状位置
 bar2 = [value for value, w in zip(x, widths_bar)]  # mid的柱状位置
 bar3 = [value + w for value, w in zip(x, widths_bar)]  # 右侧的柱状位置
-from matplotlib.patches import Patch
 
 from matplotlib.patches import Rectangle
 
@@ -89,9 +88,9 @@ axs[0].set_ylabel('CPU time (s)', fontsize=20)
 axs[0].set_xscale('log', base=2)  # 设置x轴为对数制度，底数为2
 axs[0].set_yscale('log')  # 设置y轴为对数制度
 axs[0].set_xticks(x)  # 设置X轴制点
-axs[0].set_yticks([10 ** 0, 10 ** 1, 10 ** 2, 10 ** 3, 10 ** 4], ['$10^0$', '$10^1$', '$10^2$', '$10^3$', '$10^4$'])
+axs[0].set_yticks([10 ** 0, 10 ** 1, 10 ** 2, 10 ** 3], ['$10^0$', '$10^1$', '$10^2$', '$10^3$'])
 axs[0].set_xticklabels(x, fontsize=20)
-axs[0].set_yticklabels(['$10^0$', '$10^1$', '$10^2$', '$10^3$', '$10^4$'], fontsize=20)
+axs[0].set_yticklabels(['$10^0$', '$10^1$', '$10^2$', '$10^3$'], fontsize=20)
 
 axs[0].set_title('CPU Time vs Block Number', fontsize=20)
 axs[0].legend(fontsize=20)
@@ -141,10 +140,10 @@ axs[1].set_ylabel('Index size (MB)', fontsize=20)
 axs[1].set_xscale('log', base=2)  # 设置x轴为对数制度，底数为2
 axs[1].set_yscale('log')  # 设置y轴为对数制度
 axs[1].set_xticks(x)  # 设置X轴制点
-axs[1].set_yticks([10 ** -4, 10 ** -3, 10 ** -2, 10 ** -1, 10 ** 0],
-                  ['$10^{-4}$', '$10^{-3}$', '$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
+axs[1].set_yticks([10 ** -3, 10 ** -2, 10 ** -1, 10 ** 0],
+                  ['$10^{-3}$', '$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
 axs[1].set_xticklabels(x, fontsize=20)
-axs[1].set_yticklabels(['$10^{-4}$', '$10^{-3}$', '$10^{-2}$', '$10^{-1}$', '$10^{0}$'], fontsize=20)
+axs[1].set_yticklabels(['$10^{-3}$', '$10^{-2}$', '$10^{-1}$', '$10^{0}$'], fontsize=20)
 
 axs[1].set_title('Index Size vs Block Number', fontsize=20)
 axs[1].legend(fontsize=20)

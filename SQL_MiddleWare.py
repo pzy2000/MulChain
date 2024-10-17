@@ -26,6 +26,7 @@ class SQLMiddleware:
         self.index_storage_costs = []
         self.select_latency = []
         self.select_on_chain_latency = []
+        self.select_adder_latency = []
 
     def parse_query(self, query):
         # 使用 sqlparse 解析 SQL 查询
@@ -126,9 +127,8 @@ class SQLMiddleware:
             if 'BETWEEN' in condition.upper():
                 start_time, end_time = self.extract_time_range(condition)
                 results = []
-                for entry_id, entry in self.cached_data.items():
-                    if start_time <= entry['timestamp'] <= end_time:
-                        results.append(entry)
+                # if (start_time, end_time) in self.cached_data.keys():
+                #     results.append(self.cached_data[(start_time, end_time)])
                 if results:
                     on_chain_select_end_time = time.time()
                     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
@@ -138,20 +138,38 @@ class SQLMiddleware:
                 else:
                     # 如果缓存中没有符合条件的数据，则从区块链中查询
                     results = []
-                    for entry_id in range(self.contract.functions.entryCount().call()):
-                        data = self.contract.functions.getData(entry_id).call()
-                        if start_time <= data[3] <= end_time:
-                            self.cached_data[str(entry_id)] = {
-                                "text_hash": data[0],
-                                "image_cid": data[1],
-                                "video_cid": data[2],
-                                "timestamp": data[3]
-                            }
-                            results.append(self.cached_data[str(entry_id)])
+                    results1 = []
+                    data = self.contract.functions.getDataByTimeRange(start_time, end_time).call()
+
+                    if data[3]:
+                        # self.cached_data[(start_time, end_time)] = {
+                        #     "text_hash": data[0],
+                        #     "image_cid": data[1],
+                        #     "video_cid": data[2],
+                        #     "timestamp": data[3]
+                        # }
+                        results.append({
+                            "text_hash": data[0],
+                            "image_cid": data[1],
+                            "video_cid": data[2],
+                            "timestamp": data[3]
+                        })
                     on_chain_select_end_time = time.time()
                     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time)
+                    for entry_id in range(self.contract.functions.entryCount().call()):
+                        data = self.contract.functions.getData(entry_id).call()
+                        if start_time <= data[3] <= end_time:
+                            results1.append({
+                                "text_hash": data[0],
+                                "image_cid": data[1],
+                                "video_cid": data[2],
+                                "timestamp": data[3]
+                            })
+                            # results.append(self.cached_data[str(entry_id)])
+                    select_adder_end_time = time.time()
+                    self.select_adder_latency.append(select_adder_end_time - select_end_time)
                     return results
             # 检查是否是前缀匹配查询
             # elif 'LIKE' in condition.upper():

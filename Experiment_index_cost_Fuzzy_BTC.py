@@ -59,6 +59,7 @@ class SQLMiddleware:
 
         if table_name.lower() == 'multimodal_data':
             text_hash, image_path, video_path, timestamp = values
+
             # print("parse completed")
             # 记录索引构建开始时间
             index_start_time = time.time()
@@ -81,13 +82,13 @@ class SQLMiddleware:
 
             # 调用区块链合约的 storeData 方法并记录区块生成时间
             block_start_time = time.time()
-            print("text_hash", text_hash)
+            # print("text_hash", text_hash)
             # print("type", type(text_hash))
-            print("image_cid", image_cid)
+            # print("image_cid", image_cid)
             # print("type", type(image_cid))
-            print("video_cid", video_cid)
+            # print("video_cid", video_cid)
             # print("type", type(video_cid))
-            print("timestamp", timestamp)
+            # print("timestamp", timestamp)
             # print("type", type(timestamp))
             tx_hash = self.contract.functions.storeData(text_hash, image_cid, video_cid, timestamp).transact()
             # 手动生成新区块
@@ -149,12 +150,34 @@ class SQLMiddleware:
                             results.append(self.cached_data[str(entry_id)])
                     return results
             # 检查是否是前缀匹配查询
+            # elif 'LIKE' in condition.upper():
+            #     prefix = self.extract_prefix_condition(condition)
+            #     # print("prefix", prefix)
+            #     results = []
+            #     # 先查询缓存中的数据
+            #     if str(prefix) in self.cached_data:
+            #         results.append(self.cached_data[str(prefix)])
+            #     if results:
+            #         return results
+            #     else:
+            #         # 如果缓存中没有符合条件的数据，则从区块链中查询
+            #         results = []
+            #         data = self.contract.functions.getDataByPrefix(prefix).call()
+            #         if data[3]:
+            #             self.cached_data[str(prefix)] = {
+            #                 "text_hash": data[0],
+            #                 "image_cid": data[1],
+            #                 "video_cid": data[2],
+            #                 "timestamp": data[3]
+            #             }
+            #             results.append(self.cached_data[str(prefix)])
+            #         return results
             elif 'LIKE' in condition.upper():
                 prefix = self.extract_prefix_condition(condition)
                 results = []
                 # 先查询缓存中的数据
                 for entry_id, entry in self.cached_data.items():
-                    if entry['text_hash'].startswith(prefix):
+                    if entry['timestamp'].startswith(prefix):
                         results.append(entry)
                 if results:
                     return results
@@ -163,7 +186,7 @@ class SQLMiddleware:
                     results = []
                     for entry_id in range(self.contract.functions.entryCount().call()):
                         data = self.contract.functions.getData(entry_id).call()
-                        if data[0].startswith(prefix):
+                        if data[3].startswith(prefix):
                             self.cached_data[str(entry_id)] = {
                                 "text_hash": data[0],
                                 "image_cid": data[1],
@@ -436,7 +459,7 @@ def main():
                 print(f"Error decoding JSON from file: {file_path}")
 
     print(f"Total JSON files processed: {len(data_list)}")
-    with open("AAA_TIME_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+    with open("AAA_Fuzzy_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
 
         for j in range(0, len(block_sizes)):
             entry_id = 0
@@ -452,9 +475,12 @@ def main():
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
                 sql_middleware.parse_query(insert_query)
                 # 构建 SELECT 查询并调用 parse_query
-                select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{data_list[i]['time_stamp']}' AND '{data_list[i]['time_stamp']}'"
-                # print(sql_middleware.parse_query(select_query))
-                sql_middleware.parse_query(select_query)
+                select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '201%'"
+                # print("here")
+                result = sql_middleware.parse_query(select_query)
+                # if result:
+                #     print(result)
+                # sql_middleware.parse_query(select_query)
 
             # 输出统计数据
             avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
@@ -498,7 +524,7 @@ def main():
             fw.write("\n")
 
             # print(
-            #     f"avg Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times) / len(sql_middleware.block_generation_times):.6f} seconds")
+            # f"avg Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times) / len(sql_middleware.block_generation_times):.6f} seconds")
             print(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
             fw.write(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
             fw.write("\n")

@@ -66,14 +66,14 @@ class SQLMiddleware:
 
             # 将图片和视频上传到 IPFS
             try:
-                if image_path not in self.ipfs_cache or video_path not in self.ipfs_cache:
-                    image_cid = self.ipfs.add(image_path)['Hash']
-                    video_cid = self.ipfs.add(video_path)['Hash']
-                    self.ipfs_cache[image_path] = image_cid
-                    self.ipfs_cache[video_path] = video_cid
-                else:
-                    image_cid = self.ipfs_cache.get(image_path)
-                    video_cid = self.ipfs_cache.get(video_path)
+                # if image_path not in self.ipfs_cache or video_path not in self.ipfs_cache:
+                image_cid = self.ipfs.add(image_path)['Hash']
+                video_cid = self.ipfs.add(video_path)['Hash']
+                    # self.ipfs_cache[image_path] = image_cid
+                    # self.ipfs_cache[video_path] = video_cid
+                # else:
+                #     image_cid = self.ipfs_cache.get(image_path)
+                #     video_cid = self.ipfs_cache.get(video_path)
             except Exception as e:
                 print(e)
                 image_cid = "0"
@@ -352,8 +352,8 @@ def main():
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
     # 逐步增加块的数量，从 256 到 16384
-    block_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384]
-
+    # block_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384]
+    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
     # 定义要遍历的根目录
     root_dir = '../bitcoin'
 

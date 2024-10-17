@@ -15,7 +15,12 @@ contract MultiModalStorageManager {
     // 使用映射来存储所有数据条目，键为数据条目的ID，值为DataEntry结构体
     mapping(uint256 => DataEntry) public dataEntries;
     uint256 public entryCount;  // 存储数据条目的计数器
-
+    // 定义前缀树节点结构体
+    struct TrieNode {
+        mapping(bytes1 => uint256) children; // 子节点映射
+        bool isEnd; // 标记是否为结束节点
+        uint256 entryId; // 如果是结束节点，存储对应的数据条目ID
+    }
     // B+树节点结构体定义
     struct BPlusTreeNode {
         bool isLeaf; // 是否是叶子节点
@@ -23,7 +28,8 @@ contract MultiModalStorageManager {
         uint256[] children; // 存储子节点的ID（如果是叶子节点则为空）
         uint256[] dataEntryIds; // 存储数据条目ID（仅叶子节点有效）
     }
-
+    // 存储前缀树的节点信息
+    TrieNode[] public trie;
     // B+树存储
     mapping(uint256 => BPlusTreeNode) public bPlusTreeNodes;
     uint256 public rootId;  // 根节点ID
@@ -46,6 +52,7 @@ contract MultiModalStorageManager {
         });
         nodeCount++;
         emit NodeCreated(rootId, true, new uint256[](0));
+        trie.push(); // 创建根节点
     }
 
     // 存储数据的方法，返回存储数据的条目ID
@@ -58,6 +65,9 @@ contract MultiModalStorageManager {
             timestamp: _timestamp
         });
 
+        // 将数据条目的textHash插入到前缀树中
+        insertIntoTrie(_textHash, entryCount);
+
         // 触发数据存储事件，方便监听
         emit DataStored(entryCount, _textHash, _imageCID, _videoCID, _timestamp);
 
@@ -68,10 +78,72 @@ contract MultiModalStorageManager {
         entryCount++;
         return entryCount - 1;  // 返回新存储的条目ID
     }
+    // 插入textHash到前缀树的方法
+    function insertIntoTrie(string memory _textHash, uint256 _entryId) internal {
+        uint256 currentNode = 0; // 从根节点开始
+        bytes memory textBytes = bytes(_textHash);
 
+        for (uint256 i = 0; i < textBytes.length; i++) {
+            bytes1 currentChar = textBytes[i];
+            if (trie[currentNode].children[currentChar] == 0) {
+                // 如果当前字符没有子节点，则创建新节点
+                trie.push();
+                trie[currentNode].children[currentChar] = trie.length - 1;
+            }
+            currentNode = trie[currentNode].children[currentChar];
+        }
+        // 设置结束节点信息
+        trie[currentNode].isEnd = true;
+        trie[currentNode].entryId = _entryId;
+    }
+    // 通过前缀查询数据的方法
+    function getDataByPrefix(string memory _prefix) public view returns (string[] memory, string[] memory, string[] memory, string[] memory) {
+        uint256 currentNode = 0;
+        bytes memory prefixBytes = bytes(_prefix);
+
+        // 遍历前缀树找到前缀的最后一个节点
+        for (uint256 i = 0; i < prefixBytes.length; i++) {
+            bytes1 currentChar = prefixBytes[i];
+            if (trie[currentNode].children[currentChar] == 0) {
+                // 如果找不到匹配的前缀，返回空数组
+                return (new string[](0), new string[](0), new string[](0), new string[](0));
+            }
+            currentNode = trie[currentNode].children[currentChar];
+        }
+
+        // 找到以该前缀开头的所有数据条目
+        uint256[] memory matchingEntryIds = findAllEntriesFromNode(currentNode);
+
+        // 构建返回结果
+        string[] memory textHashes = new string[](matchingEntryIds.length);
+        string[] memory imageCIDs = new string[](matchingEntryIds.length);
+        string[] memory videoCIDs = new string[](matchingEntryIds.length);
+        string[] memory timestamps = new string[](matchingEntryIds.length);
+        for (uint256 i = 0; i < matchingEntryIds.length; i++) {
+            DataEntry memory entry = dataEntries[matchingEntryIds[i]];
+            textHashes[i] = entry.textHash;
+            imageCIDs[i] = entry.imageCID;
+            videoCIDs[i] = entry.videoCID;
+            timestamps[i] = entry.timestamp;
+        }
+        return (textHashes, imageCIDs, videoCIDs, timestamps);
+    }
     // 设置greeting变量的值
     function setGreeting(string memory _greeting) public {
         greeting = _greeting;
+    }
+
+    // 辅助函数，从指定节点开始找到所有匹配的条目ID
+    function findAllEntriesFromNode(uint256 _nodeId) internal view returns (uint256[] memory) {
+        uint256[] memory entries = new uint256[](entryCount);
+        uint256 count = 0;
+        findAllEntriesHelper(_nodeId, entries, count);
+        // 创建返回数组并复制匹配的条目ID
+        uint256[] memory result = new uint256[](count);
+        for (uint256 i = 0; i < count; i++) {
+            result[i] = entries[i];
+        }
+        return result;
     }
 
     // 返回greeting变量的值
@@ -152,31 +224,44 @@ contract MultiModalStorageManager {
         return (textHashes, imageCIDs, videoCIDs, timestamps);
     }
 
-    // 辅助函数，用于比较字符串（例如比较时间戳）
-    function compareStrings(string memory a, string memory b) internal pure returns (int) {
-        bytes memory aBytes = bytes(a);
-        bytes memory bBytes = bytes(b);
-        uint minLength = aBytes.length;
-        if (bBytes.length < minLength) {
-            minLength = bBytes.length;
+//    // 辅助函数，用于比较字符串（例如比较时间戳）
+//    function compareStrings(string memory a, string memory b) internal pure returns (int) {
+//        bytes memory aBytes = bytes(a);
+//        bytes memory bBytes = bytes(b);
+//        uint minLength = aBytes.length;
+//        if (bBytes.length < minLength) {
+//            minLength = bBytes.length;
+//        }
+//
+//        // 字符逐个比较，找到第一个不相等的字符
+//        for (uint i = 0; i < minLength; i++) {
+//            if (aBytes[i] < bBytes[i]) {
+//                return -1;  // a 小于 b
+//            } else if (aBytes[i] > bBytes[i]) {
+//                return 1;   // a 大于 b
+//            }
+//        }
+//
+//        // 如果所有字符都相等，比较字符串长度
+//        if (aBytes.length < bBytes.length) {
+//            return -1;  // a 长度小于 b
+//        } else if (aBytes.length > bBytes.length) {
+//            return 1;   // a 长度大于 b
+//        } else {
+//            return 0;   // a 和 b 完全相等
+//        }
+//    }
+    // 辅助递归函数，找到所有匹配的条目ID
+    function findAllEntriesHelper(uint256 _nodeId, uint256[] memory _entries, uint256 _count) internal view {
+        if (trie[_nodeId].isEnd) {
+            _entries[_count] = trie[_nodeId].entryId;
+            _count++;
         }
-
-        // 字符逐个比较，找到第一个不相等的字符
-        for (uint i = 0; i < minLength; i++) {
-            if (aBytes[i] < bBytes[i]) {
-                return -1;  // a 小于 b
-            } else if (aBytes[i] > bBytes[i]) {
-                return 1;   // a 大于 b
+        for (uint8 i = 0; i < 256; i++) {
+            bytes1 char = bytes1(i);
+            if (trie[_nodeId].children[char] != 0) {
+                findAllEntriesHelper(trie[_nodeId].children[char], _entries, _count);
             }
-        }
-
-        // 如果所有字符都相等，比较字符串长度
-        if (aBytes.length < bBytes.length) {
-            return -1;  // a 长度小于 b
-        } else if (aBytes.length > bBytes.length) {
-            return 1;   // a 长度大于 b
-        } else {
-            return 0;   // a 和 b 完全相等
         }
     }
 

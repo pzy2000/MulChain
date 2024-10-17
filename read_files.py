@@ -58,3 +58,10 @@ if time_stamp_list:
     print(f"Maximum time_stamp_str: {max_time_stamp}")
 else:
     print("No valid time_stamp found.")
+
+list_201 = []
+for time in time_stamp_list:
+    if time.startswith('201'):
+        # print("time", time)
+        list_201.append(time)
+print(len(list_201)/len(time_stamp_list))

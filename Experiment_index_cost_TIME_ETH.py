@@ -78,7 +78,7 @@ def main():
     max_time = max(time_stamp_list)
     print("min_time:", min_time)
     print("max_time:", max_time)
-    with open("AAA_TIME_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+    with open("AAA_TIME_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):
             # entry_id = 0
             block_size = block_sizes[j]

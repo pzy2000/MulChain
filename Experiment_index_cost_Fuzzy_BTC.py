@@ -487,6 +487,9 @@ def main():
                 sql_middleware.block_generation_times)
             avg_index_storage_cost = sum(sql_middleware.index_storage_costs) / len(sql_middleware.index_storage_costs)
 
+
+
+
             print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
             fw.write(
                 f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
@@ -509,6 +512,17 @@ def main():
             fw.write(
                 f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
             fw.write("\n")
+
+
+
+
+
+
+
+
+
+
+
 
             # print(
             #     f"avg Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times):.4f} seconds")

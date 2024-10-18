@@ -123,11 +123,35 @@ def main():
                 f"Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times):.4f} seconds")
             fw.write("\n")
 
+
+
+
             print(
                 f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
             fw.write(
                 f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
             fw.write("\n")
+
+            print(
+                f"vo_adder_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) / 1024:.8f} MB")
+            fw.write(
+                f"vo_adder_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) / 1024:.8f} MB")
+            fw.write("\n")
+
+            print(
+                f"vo_btree_size for {block_size} blocks: {sum(sql_middleware.vo_btree_size_kb) / 1024:.8f} MB")
+            fw.write(
+                f"vo_btree_size for {block_size} blocks: {sum(sql_middleware.vo_btree_size_kb) / 1024:.8f} MB")
+            fw.write("\n")
+
+            print(
+                f"vo_bhashtree_size for {block_size} blocks: {sum(sql_middleware.vo_bhashtree_size_kb) / 1024:.8f} MB")
+            fw.write(
+                f"vo_bhashtree_size for {block_size} blocks: {sum(sql_middleware.vo_bhashtree_size_kb) / 1024:.8f} MB")
+            fw.write("\n")
+
+
+
 
             print(
                 f"Select Btree latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
@@ -152,6 +176,9 @@ def main():
             fw.write(
                 f"On-chain Select latency for {block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
             fw.write("\n")
+
+
+
 
             print(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
             fw.write(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")

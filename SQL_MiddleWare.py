@@ -7,8 +7,9 @@ from datetime import datetime, timedelta
 import sqlparse
 from sqlparse.tokens import DML
 from sqlparse.tokens import Token
-from global_w3 import w3
+from global_w3 import w3, gas_per_kb
 from pybloom_live import BloomFilter  # 导入 Bloom 过滤器
+
 block_sizes = [16, 32, 64, 128, 256, 512, 1024]
 
 
@@ -50,6 +51,8 @@ class SQLMiddleware:
         self.cached_data = {}
         self.ipfs_cache = {}
         self.cached_path = {}
+
+
         # 初始化用于统计索引构建和区块生成的开销数据
         self.index_building_times = []
         self.on_chain_index_building_times = []
@@ -59,6 +62,11 @@ class SQLMiddleware:
         self.select_on_chain_latency = []
         self.select_adder_latency = []
         self.select_BHash_latency = []
+
+
+        self.vo_btree_size_kb = []
+        self.vo_adder_size_kb = []
+        self.vo_bhashtree_size_kb = []
 
     def parse_query(self, query):
         # 使用 sqlparse 解析 SQL 查询
@@ -87,9 +95,6 @@ class SQLMiddleware:
 
         if table_name.lower() == 'multimodal_data':
             text_hash, image_path, video_path, timestamp = values
-
-            # print("parse completed")
-            # 记录索引构建开始时间
             index_start_time = time.time()
 
             # 将图片和视频上传到 IPFS
@@ -110,14 +115,6 @@ class SQLMiddleware:
 
             # 调用区块链合约的 storeData 方法并记录区块生成时间
             block_start_time = time.time()
-            # print("text_hash", text_hash)
-            # print("type", type(text_hash))
-            # print("image_cid", image_cid)
-            # print("type", type(image_cid))
-            # print("video_cid", video_cid)
-            # print("type", type(video_cid))
-            # print("timestamp", timestamp)
-            # print("type", type(timestamp))
             tx_hash = self.contract.functions.storeData(text_hash, image_cid, video_cid, timestamp).transact()
             # 手动生成新区块
             block_end_time = time.time()
@@ -171,9 +168,13 @@ class SQLMiddleware:
                     # 如果缓存中没有符合条件的数据，则从区块链中查询
                     results = []
                     results1 = []
-                    results2 = []
+                    # results2 = []
+                    gas_b = self.contract.functions.getDataByTimeRange(start_time, end_time).estimate_gas(
+                        {'from': w3.eth.default_account})
                     data_btree = self.contract.functions.getDataByTimeRange(start_time, end_time).call()
 
+                    self.vo_btree_size_kb.append(gas_b / gas_per_kb)
+                    # print(f"VO Size: {gas_b / gas_per_kb:.4f} KB")
 
                     if data_btree[3]:
                         # self.cached_data[(start_time, end_time)] = {
@@ -192,8 +193,13 @@ class SQLMiddleware:
                     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time)
+                    prev_gas_a = None
                     for entry_id in range(self.contract.functions.entryCount().call()):
                         data_adder = self.contract.functions.getData(entry_id).call()
+                        gas_a = self.contract.functions.getData(entry_id).estimate_gas(
+                            {'from': w3.eth.default_account}) if entry_id == 0 else prev_gas_a
+                        prev_gas_a = gas_a if entry_id == 0 else prev_gas_a
+                        self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                         if start_time <= data_adder[3] <= end_time:
                             results1.append({
                                 "text_hash": data_adder[0],
@@ -207,6 +213,9 @@ class SQLMiddleware:
                     data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
                     select_bhash_end_time = time.time()
                     self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time)
+                    gas_bh = self.contract.functions.getDataByTime_BHash(start_time, end_time).estimate_gas(
+                        {'from': w3.eth.default_account})
+                    self.vo_bhashtree_size_kb.append(gas_bh / gas_per_kb)
                     if data_btree != data_bhash:
                         print("data_btree mismatch")
                         print("length of data_BTree: ", data_btree)

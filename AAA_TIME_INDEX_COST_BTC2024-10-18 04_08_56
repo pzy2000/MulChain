@@ -1,0 +1,66 @@
+----- Starting test for 32 blocks -----
+Index build time for 32 blocks: 5.5034 seconds
+On-Chain Index build time for 32 blocks: 5.0999 seconds
+Block generation time for 32 blocks: 4.9036 seconds
+Index storage cost for 32 blocks: 0.00242141 MB
+Select Btree latency for 32 blocks: 0.0350 seconds
+Select ADDER latency for 32 blocks: 0.3662 seconds
+Select latency for 32 blocks: 0.0350 seconds
+On-chain Select latency for 32 blocks: 0.0350 seconds
+avg Index build time for 32 blocks: 0.1720 seconds
+avg On-Chain Index build time for 32 blocks: 0.1594 seconds
+avg Block generation time for 32 blocks: 0.153236 seconds
+avg Index storage cost for 32 blocks: 0.00007567 MB
+----- Starting test for 64 blocks -----
+Index build time for 64 blocks: 10.6970 seconds
+On-Chain Index build time for 64 blocks: 10.2935 seconds
+Block generation time for 64 blocks: 9.9018 seconds
+Index storage cost for 64 blocks: 0.00484282 MB
+Select Btree latency for 64 blocks: 0.0427 seconds
+Select ADDER latency for 64 blocks: 0.7084 seconds
+Select latency for 64 blocks: 0.0427 seconds
+On-chain Select latency for 64 blocks: 0.0427 seconds
+avg Index build time for 64 blocks: 0.1671 seconds
+avg On-Chain Index build time for 64 blocks: 0.1608 seconds
+avg Block generation time for 64 blocks: 0.154715 seconds
+avg Index storage cost for 64 blocks: 0.00007567 MB
+----- Starting test for 128 blocks -----
+Index build time for 128 blocks: 21.1219 seconds
+On-Chain Index build time for 128 blocks: 20.7183 seconds
+Block generation time for 128 blocks: 19.9409 seconds
+Index storage cost for 128 blocks: 0.00968564 MB
+Select Btree latency for 128 blocks: 0.0657 seconds
+Select ADDER latency for 128 blocks: 1.3862 seconds
+Select latency for 128 blocks: 0.0657 seconds
+On-chain Select latency for 128 blocks: 0.0657 seconds
+avg Index build time for 128 blocks: 0.1650 seconds
+avg On-Chain Index build time for 128 blocks: 0.1619 seconds
+avg Block generation time for 128 blocks: 0.155788 seconds
+avg Index storage cost for 128 blocks: 0.00007567 MB
+----- Starting test for 256 blocks -----
+Index build time for 256 blocks: 42.1156 seconds
+On-Chain Index build time for 256 blocks: 41.7120 seconds
+Block generation time for 256 blocks: 40.1597 seconds
+Index storage cost for 256 blocks: 0.01937127 MB
+Select Btree latency for 256 blocks: 0.0949 seconds
+Select ADDER latency for 256 blocks: 2.7466 seconds
+Select latency for 256 blocks: 0.0949 seconds
+On-chain Select latency for 256 blocks: 0.0949 seconds
+avg Index build time for 256 blocks: 0.1645 seconds
+avg On-Chain Index build time for 256 blocks: 0.1629 seconds
+avg Block generation time for 256 blocks: 0.156874 seconds
+avg Index storage cost for 256 blocks: 0.00007567 MB
+----- Starting test for 512 blocks -----
+Index build time for 512 blocks: 84.1005 seconds
+On-Chain Index build time for 512 blocks: 83.6959 seconds
+Block generation time for 512 blocks: 80.5958 seconds
+Index storage cost for 512 blocks: 0.03874254 MB
+Select Btree latency for 512 blocks: 0.1566 seconds
+Select ADDER latency for 512 blocks: 5.4346 seconds
+Select latency for 512 blocks: 0.1566 seconds
+On-chain Select latency for 512 blocks: 0.1566 seconds
+avg Index build time for 512 blocks: 0.1643 seconds
+avg On-Chain Index build time for 512 blocks: 0.1635 seconds
+avg Block generation time for 512 blocks: 0.157414 seconds
+avg Index storage cost for 512 blocks: 0.00007567 MB
+----- Starting test for 1024 blocks -----

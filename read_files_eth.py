@@ -8,7 +8,7 @@ df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transa
 data_list = [
     {
         'hash': row['transactionHash'],
-        'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d')
+        'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H_%M_%S')
     }
     for _, row in df.iterrows()
 ]

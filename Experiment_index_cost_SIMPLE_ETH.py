@@ -1,11 +1,10 @@
 import hashlib
 import json
-from datetime import datetime
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-from web3_NFT.SQL_MiddleWare import SQLMiddleware
 from global_w3 import w3
+from web3_NFT.SQL_MiddleWare import SQLMiddleware
 
 
 # class SQLMiddleware:
@@ -482,7 +481,7 @@ def main():
         }
         for _, row in df.iterrows()
     ]
-    print(f"Loaded {len(data_list)} items from data_list.pkl")
+    print(f"Loaded {len(data_list)} items from 0to999999_BlockTransaction.csv")
 
     with open("AAA_SIMPLE_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):

@@ -1,11 +1,12 @@
 import hashlib
 import json
 from datetime import datetime
+
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-from web3_NFT.SQL_MiddleWare import SQLMiddleware
-from global_w3 import w3
+
+from SQL_MiddleWare import SQLMiddleware
 
 
 # class SQLMiddleware:
@@ -369,6 +370,7 @@ def generate_text_hash(text):
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化
     ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+    from global_w3 import w3
 
     # 安装并设置 Solidity 编译器版本
     install_solc("0.8.20")

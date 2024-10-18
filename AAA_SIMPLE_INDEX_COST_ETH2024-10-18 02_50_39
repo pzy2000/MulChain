@@ -1,0 +1,77 @@
+----- Starting test for 32 blocks -----
+Index build time for 32 blocks: 19.5872 seconds
+On-Chain Index build time for 32 blocks: 19.2774 seconds
+Block generation time for 32 blocks: 19.0854 seconds
+Index storage cost for 32 blocks: 0.00251363 MB
+Select latency for 32 blocks: 0.5249 seconds
+On-chain Select latency for32 blocks: 0.0232 seconds
+avg Index build time for 32 blocks: 0.6121 seconds
+avg On-Chain Index build time for 32 blocks: 0.6024 seconds
+avg Block generation time for 32 blocks: 0.596420 seconds
+avg Index storage cost for 32 blocks: 0.00007855 MB
+----- Starting test for 64 blocks -----
+Index build time for 64 blocks: 39.3390 seconds
+On-Chain Index build time for 64 blocks: 39.0292 seconds
+Block generation time for 64 blocks: 38.6318 seconds
+Index storage cost for 64 blocks: 0.00521514 MB
+Select latency for 64 blocks: 0.5242 seconds
+On-chain Select latency for64 blocks: 0.0230 seconds
+avg Index build time for 64 blocks: 0.6147 seconds
+avg On-Chain Index build time for 64 blocks: 0.6098 seconds
+avg Block generation time for 64 blocks: 0.603622 seconds
+avg Index storage cost for 64 blocks: 0.00008149 MB
+----- Starting test for 128 blocks -----
+Index build time for 128 blocks: 78.9013 seconds
+On-Chain Index build time for 128 blocks: 78.5915 seconds
+Block generation time for 128 blocks: 77.7870 seconds
+Index storage cost for 128 blocks: 0.01118213 MB
+Select latency for 128 blocks: 0.5229 seconds
+On-chain Select latency for128 blocks: 0.0229 seconds
+avg Index build time for 128 blocks: 0.6164 seconds
+avg On-Chain Index build time for 128 blocks: 0.6140 seconds
+avg Block generation time for 128 blocks: 0.607711 seconds
+avg Index storage cost for 128 blocks: 0.00008736 MB
+----- Starting test for 256 blocks -----
+Index build time for 256 blocks: 158.1101 seconds
+On-Chain Index build time for 256 blocks: 157.8003 seconds
+Block generation time for 256 blocks: 156.1751 seconds
+Index storage cost for 256 blocks: 0.02538079 MB
+Select latency for 256 blocks: 0.5218 seconds
+On-chain Select latency for256 blocks: 0.0229 seconds
+avg Index build time for 256 blocks: 0.6176 seconds
+avg On-Chain Index build time for 256 blocks: 0.6164 seconds
+avg Block generation time for 256 blocks: 0.610059 seconds
+avg Index storage cost for 256 blocks: 0.00009914 MB
+----- Starting test for 512 blocks -----
+Index build time for 512 blocks: 317.8571 seconds
+On-Chain Index build time for 512 blocks: 317.5463 seconds
+Block generation time for 512 blocks: 314.2598 seconds
+Index storage cost for 512 blocks: 0.06284358 MB
+Select latency for 512 blocks: 0.5205 seconds
+On-chain Select latency for512 blocks: 0.0229 seconds
+avg Index build time for 512 blocks: 0.6208 seconds
+avg On-Chain Index build time for 512 blocks: 0.6202 seconds
+avg Block generation time for 512 blocks: 0.613789 seconds
+avg Index storage cost for 512 blocks: 0.00012274 MB
+----- Starting test for 1024 blocks -----
+Index build time for 1024 blocks: 637.6560 seconds
+On-Chain Index build time for 1024 blocks: 637.3452 seconds
+Block generation time for 1024 blocks: 630.7288 seconds
+Index storage cost for 1024 blocks: 0.17402889 MB
+Select latency for 1024 blocks: 0.5217 seconds
+On-chain Select latency for1024 blocks: 0.0229 seconds
+avg Index build time for 1024 blocks: 0.6227 seconds
+avg On-Chain Index build time for 1024 blocks: 0.6224 seconds
+avg Block generation time for 1024 blocks: 0.615946 seconds
+avg Index storage cost for 1024 blocks: 0.00016995 MB
+----- Starting test for 2048 blocks -----
+Index build time for 2048 blocks: 1277.3005 seconds
+On-Chain Index build time for 2048 blocks: 1276.9887 seconds
+Block generation time for 2048 blocks: 1263.7629 seconds
+Index storage cost for 2048 blocks: 0.54195169 MB
+Select latency for 2048 blocks: 0.5219 seconds
+On-chain Select latency for2048 blocks: 0.0230 seconds
+avg Index build time for 2048 blocks: 0.6237 seconds
+avg On-Chain Index build time for 2048 blocks: 0.6235 seconds
+avg Block generation time for 2048 blocks: 0.617072 seconds
+avg Index storage cost for 2048 blocks: 0.00026462 MB

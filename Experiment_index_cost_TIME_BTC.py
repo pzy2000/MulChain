@@ -1,31 +1,15 @@
 import hashlib
 import json
-import random
-from datetime import datetime, timedelta
-
+import pickle
+from datetime import datetime
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
-from SQL_MiddleWare import SQLMiddleware
+from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times
 
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
-
-
-def generate_random_times(min_time, max_time):
-    # 生成两个随机的时间差
-    min_time = datetime.strptime(min_time, '%Y-%m-%d %H:%M:%S')
-    max_time = datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
-    delta_a = random.randint(0, int((max_time - min_time).total_seconds()))
-    delta_b = random.randint(delta_a, int((max_time - min_time).total_seconds()))
-
-    # 计算 a 和 b 的具体时间
-    a = min_time + timedelta(seconds=delta_a)
-    b = min_time + timedelta(seconds=delta_b)
-
-    return a, b
 
 
 def main():
@@ -73,9 +57,6 @@ def main():
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
     # 逐步增加块的数量，从 256 到 16384
-    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
-
-    import pickle
 
     with open('data_list.pkl', 'rb') as f:
         data_list = pickle.load(f)
@@ -87,18 +68,16 @@ def main():
     print("min_time:", min_time)
     print("max_time:", max_time)
 
-    # 生成随机的 a 和 b
-
     # 验证是否成功读取
     print(f"Loaded {len(data_list)} items from data_list.pkl")
     with open("AAA_TIME_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
-
         for j in range(0, len(block_sizes)):
             # entry_id = 0
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")
             fw.write("\n")
+            print(f"----- Starting insert query for {block_size} blocks -----")
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 text_hash = data_list[i]['hash']
                 time_stamp = data_list[i]['time_stamp']
@@ -106,11 +85,13 @@ def main():
                 video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
                 sql_middleware.parse_query(insert_query)
+
+            print(f"----- Starting select query for {block_size} blocks -----")
+            for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 # 构建 SELECT 查询并调用 parse_query
                 a, b = generate_random_times(min_time, max_time)
                 select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
                 sql_middleware.parse_query(select_query)
-                # sql_middleware.parse_query(select_query)
 
             # 输出统计数据
             avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
@@ -154,9 +135,9 @@ def main():
             fw.write("\n")
 
             print(
-                f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
+                f"Select BHashTree latency for {block_size} blocks: {sum(sql_middleware.select_BHash_latency) / len(sql_middleware.select_BHash_latency):.4f} seconds")
             fw.write(
-                f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
+                f"Select BHashTree latency for {block_size} blocks: {sum(sql_middleware.select_BHash_latency) / len(sql_middleware.select_BHash_latency):.4f} seconds")
             fw.write("\n")
 
             print(
@@ -186,13 +167,6 @@ def main():
             print(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write("\n")
-
-            # 重置统计数据
-            # sql_middleware.index_building_times.clear()
-            # sql_middleware.block_generation_times.clear()
-            # sql_middleware.index_storage_costs.clear()
-            # sql_middleware.on_chain_index_building_times.clear()
-            # entry_id += 1
 
 
 if __name__ == "__main__":

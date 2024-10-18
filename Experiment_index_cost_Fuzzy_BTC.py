@@ -1,20 +1,12 @@
 import hashlib
 import json
-import os
-import pickle
-import re
-import sys
-import time
 from datetime import datetime
+
 import ipfshttpclient
-import sqlparse
-from pybloom_live import BloomFilter  # 导入 Bloom 过滤器
 from solcx import compile_standard, install_solc, set_solc_version
-from sqlparse.tokens import DML
-from sqlparse.tokens import Token
 from tqdm import tqdm
-from global_w3 import w3
-from web3_NFT.SQL_MiddleWare import SQLMiddleware
+
+from SQL_MiddleWare import SQLMiddleware, block_sizes
 
 
 # class SQLMiddleware:
@@ -407,7 +399,6 @@ def main():
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
     # 逐步增加块的数量，从 256 到 16384
-    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
 
     # block_sizes = [256]
 

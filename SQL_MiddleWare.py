@@ -1,12 +1,29 @@
 import pickle
+import random
 import re
 import sys
 import time
+from datetime import datetime, timedelta
 import sqlparse
 from sqlparse.tokens import DML
 from sqlparse.tokens import Token
 from global_w3 import w3
 from pybloom_live import BloomFilter  # 导入 Bloom 过滤器
+block_sizes = [16, 32, 64, 128, 256, 512, 1024]
+
+
+def generate_random_times(min_time, max_time):
+    # 生成两个随机的时间差
+    min_time = datetime.strptime(min_time, '%Y-%m-%d %H:%M:%S')
+    max_time = datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
+    delta_a = random.randint(0, int((max_time - min_time).total_seconds()))
+    delta_b = random.randint(delta_a, int((max_time - min_time).total_seconds()))
+
+    # 计算 a 和 b 的具体时间
+    a = min_time + timedelta(seconds=delta_a)
+    b = min_time + timedelta(seconds=delta_b)
+
+    return a, a
 
 
 class SQLMiddleware:
@@ -27,6 +44,7 @@ class SQLMiddleware:
         self.select_latency = []
         self.select_on_chain_latency = []
         self.select_adder_latency = []
+        self.select_BHash_latency = []
 
     def parse_query(self, query):
         # 使用 sqlparse 解析 SQL 查询
@@ -139,37 +157,46 @@ class SQLMiddleware:
                     # 如果缓存中没有符合条件的数据，则从区块链中查询
                     results = []
                     results1 = []
-                    data = self.contract.functions.getDataByTimeRange(start_time, end_time).call()
+                    results2 = []
+                    data_btree = self.contract.functions.getDataByTimeRange(start_time, end_time).call()
 
-                    if data[3]:
+
+                    if data_btree[3]:
                         # self.cached_data[(start_time, end_time)] = {
-                        #     "text_hash": data[0],
-                        #     "image_cid": data[1],
-                        #     "video_cid": data[2],
-                        #     "timestamp": data[3]
+                        #     "text_hash": data_btree[0],
+                        #     "image_cid": data_btree[1],
+                        #     "video_cid": data_btree[2],
+                        #     "timestamp": data_btree[3]
                         # }
                         results.append({
-                            "text_hash": data[0],
-                            "image_cid": data[1],
-                            "video_cid": data[2],
-                            "timestamp": data[3]
+                            "text_hash": data_btree[0],
+                            "image_cid": data_btree[1],
+                            "video_cid": data_btree[2],
+                            "timestamp": data_btree[3]
                         })
                     on_chain_select_end_time = time.time()
                     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time)
                     for entry_id in range(self.contract.functions.entryCount().call()):
-                        data = self.contract.functions.getData(entry_id).call()
-                        if start_time <= data[3] <= end_time:
+                        data_adder = self.contract.functions.getData(entry_id).call()
+                        if start_time <= data_adder[3] <= end_time:
                             results1.append({
-                                "text_hash": data[0],
-                                "image_cid": data[1],
-                                "video_cid": data[2],
-                                "timestamp": data[3]
+                                "text_hash": data_adder[0],
+                                "image_cid": data_adder[1],
+                                "video_cid": data_adder[2],
+                                "timestamp": data_adder[3]
                             })
                             # results.append(self.cached_data[str(entry_id)])
                     select_adder_end_time = time.time()
                     self.select_adder_latency.append(select_adder_end_time - select_end_time)
+                    data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
+                    select_bhash_end_time = time.time()
+                    self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time)
+                    if data_btree != data_bhash:
+                        print("data_btree mismatch")
+                        print("length of data_BTree: ", data_btree)
+                        print("length of data_BHash: ", data_bhash)
                     return results
             # 检查是否是前缀匹配查询
             # elif 'LIKE' in condition.upper():

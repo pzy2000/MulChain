@@ -1,29 +1,13 @@
 import hashlib
 import json
-import random
-from datetime import datetime, timedelta
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-from SQL_MiddleWare import SQLMiddleware
+from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times
 
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
-
-
-def generate_random_times(min_time, max_time):
-    # 生成两个随机的时间差
-    min_time = datetime.strptime(min_time, '%Y-%m-%d')
-    max_time = datetime.strptime(max_time, '%Y-%m-%d')
-    delta_a = random.randint(0, int((max_time - min_time).total_seconds()))
-    delta_b = random.randint(delta_a, int((max_time - min_time).total_seconds()))
-
-    # 计算 a 和 b 的具体时间
-    a = min_time + timedelta(seconds=delta_a)
-    b = min_time + timedelta(seconds=delta_b)
-
-    return a, b
 
 
 def main():
@@ -71,7 +55,6 @@ def main():
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
     # 逐步增加块的数量，从 256 到 16384
-    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
 
     import pandas as pd
     from datetime import datetime
@@ -96,7 +79,6 @@ def main():
     print("min_time:", min_time)
     print("max_time:", max_time)
     with open("AAA_TIME_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
-
         for j in range(0, len(block_sizes)):
             # entry_id = 0
             block_size = block_sizes[j]
@@ -160,9 +142,9 @@ def main():
             fw.write("\n")
 
             print(
-                f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
+                f"Select BHashTree latency for {block_size} blocks: {sum(sql_middleware.select_BHash_latency) / len(sql_middleware.select_BHash_latency):.4f} seconds")
             fw.write(
-                f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
+                f"Select BHashTree latency for {block_size} blocks: {sum(sql_middleware.select_BHash_latency) / len(sql_middleware.select_BHash_latency):.4f} seconds")
             fw.write("\n")
 
             print(
@@ -181,24 +163,15 @@ def main():
                 f"avg On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times) / len(sql_middleware.on_chain_index_building_times):.4f} seconds")
             fw.write("\n")
 
-            # print(
-            #     f"avg Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times) / len(sql_middleware.block_generation_times):.6f} seconds")
+            # print(f"avg Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times) / len(sql_middleware.block_generation_times):.6f} seconds")
             print(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
             fw.write(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
             fw.write("\n")
 
-            # print(
-            # f"avg Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024 / len(sql_middleware.index_storage_costs):.8f} MB")
+            # print(f"avg Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024 / len(sql_middleware.index_storage_costs):.8f} MB")
             print(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write("\n")
-
-            # 重置统计数据
-            # sql_middleware.index_building_times.clear()
-            # sql_middleware.block_generation_times.clear()
-            # sql_middleware.index_storage_costs.clear()
-            # sql_middleware.on_chain_index_building_times.clear()
-            # entry_id += 1
 
 
 if __name__ == "__main__":

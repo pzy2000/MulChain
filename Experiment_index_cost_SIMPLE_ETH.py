@@ -1,10 +1,9 @@
 import hashlib
 import json
-from datetime import datetime
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-from SQL_MiddleWare import SQLMiddleware
+from SQL_MiddleWare import SQLMiddleware, block_sizes
 from global_w3 import w3
 
 
@@ -411,7 +410,6 @@ def main():
 
     # 逐步增加块的数量，从 256 到 16384
     # block_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384]
-    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
     # # 定义要遍历的根目录
     # root_dir = '../bitcoin'
     #

@@ -27,7 +27,7 @@ contract MultiModalStorageManager {
         uint256[] dataEntryIds; // 存储数据条目 ID（仅叶子节点有效）
 
         // 如果是哈希节点，则使用映射存储时间戳和数据条目 ID 的对应关系
-        mapping(uint256 => uint256) hashDataEntries;
+        mapping(uint256 => uint256[]) hashDataEntries;
     }
 
 
@@ -126,28 +126,30 @@ contract MultiModalStorageManager {
     }
 
     // 插入到B+树中的方法
-    function insertToBPlusTree(uint256 entryId, string memory timestamp) internal {
-        uint256 timeKey = stringToUint(timestamp);
-        BPlusTreeNode storage rootNode = bPlusTreeNodes[rootId];
+function insertToBPlusTree(uint256 entryId, string memory timestamp) internal {
+    uint256 timeKey = stringToUint(timestamp);
+    BPlusTreeNode storage rootNode = bPlusTreeNodes[rootId];
 
-        // 检查是否需要转换为哈希节点
-        if (rootNode.isLeaf && rootNode.dataEntryIds.length >= 10) {
-            rootNode.isHashNode = true;
-            for (uint256 i = 0; i < rootNode.dataEntryIds.length; i++) {
-                rootNode.hashDataEntries[rootNode.keys[i]] = rootNode.dataEntryIds[i];
-            }
-//            rootNode.keys = new uint256[](0); // 清空 keys 和 dataEntryIds
-//            rootNode.dataEntryIds = new uint256[](0);
+    // 检查是否需要转换为哈希节点
+    if (rootNode.isLeaf && rootNode.dataEntryIds.length >= 10 && !rootNode.isHashNode) {
+        rootNode.isHashNode = true;
+        for (uint256 i = 0; i < rootNode.dataEntryIds.length; i++) {
+            uint256 key = rootNode.keys[i];
+            rootNode.hashDataEntries[key].push(rootNode.dataEntryIds[i]);
         }
+        // rootNode.keys = new uint256 ; // 清空 keys 和 dataEntryIds
+        // rootNode.dataEntryIds = new uint256 ;
+    }
 
-        // 插入到哈希节点
-        if (rootNode.isHashNode) {
-            rootNode.hashDataEntries[timeKey] = entryId;
-        } else {
-            rootNode.keys.push(timeKey);
-            rootNode.dataEntryIds.push(entryId);
-        }
+    // 插入到哈希节点
+    if (rootNode.isHashNode) {
+        rootNode.hashDataEntries[timeKey].push(entryId);
+    } else {
+        rootNode.keys.push(timeKey);
+        rootNode.dataEntryIds.push(entryId);
+    }
 }
+
 
 
 
@@ -255,14 +257,15 @@ contract MultiModalStorageManager {
 }
 
     // 辅助函数：递归查找符合时间范围的条目
-    function findEntriesByTimeRange(uint256 nodeId, uint256 startKey, uint256 endKey, uint256[] memory resultEntryIds, uint256 count) internal view returns (uint256){
+    function findEntriesByTimeRange(uint256 nodeId, uint256 startKey, uint256 endKey, uint256[] memory resultEntryIds, uint256 count) internal view returns (uint256) {
         BPlusTreeNode storage node = bPlusTreeNodes[nodeId];
         if (node.isLeaf) {
             if (node.isHashNode) {
                 // 如果是哈希节点，遍历哈希映射
                 for (uint256 key = startKey; key <= endKey; key++) {
-                    if (node.hashDataEntries[key] != 0) {
-                        resultEntryIds[count] = node.hashDataEntries[key];
+                    uint256[] storage entryIds = node.hashDataEntries[key];
+                    for (uint256 j = 0; j < entryIds.length; j++) {
+                        resultEntryIds[count] = entryIds[j];
                         count++;
                     }
                 }
@@ -286,7 +289,7 @@ contract MultiModalStorageManager {
             }
         }
         return count;
-
-    }
+}
 
 }
+

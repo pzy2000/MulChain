@@ -1,12 +1,11 @@
 import hashlib
 import json
 from datetime import datetime
-
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
-from SQL_MiddleWare import SQLMiddleware
+from SQL_MiddleWare import SQLMiddleware, block_sizes
+import pickle
 
 
 # class SQLMiddleware:
@@ -413,7 +412,6 @@ def main():
 
     # 逐步增加块的数量，从 256 到 16384
     # block_sizes = [256, 512, 1024, 2048, 4096, 8192, 16384]
-    block_sizes = [32, 64, 128, 256, 512, 1024, 2048]
     # # 定义要遍历的根目录
     # root_dir = '../bitcoin'
     #
@@ -464,8 +462,6 @@ def main():
     #             print(f"Error decoding JSON from file: {file_path}")
     #
     # print(f"Total JSON files processed: {len(data_list)}")
-    import pickle
-
     with open('data_list.pkl', 'rb') as f:
         data_list = pickle.load(f)
 
@@ -497,7 +493,8 @@ def main():
             avg_index_storage_cost = sum(sql_middleware.index_storage_costs) / len(sql_middleware.index_storage_costs)
 
             print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
-            fw.write(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
+            fw.write(
+                f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
             fw.write("\n")
 
             print(
@@ -512,16 +509,22 @@ def main():
                 f"Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times):.4f} seconds")
             fw.write("\n")
 
-            print(f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
-            fw.write(f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
+            print(
+                f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
+            fw.write(
+                f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
             fw.write("\n")
 
-            print(f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
-            fw.write(f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency)/ len(sql_middleware.select_latency):.4f} seconds")
+            print(
+                f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
+            fw.write(
+                f"Select latency for {block_size} blocks: {sum(sql_middleware.select_latency) / len(sql_middleware.select_latency):.4f} seconds")
             fw.write("\n")
 
-            print(f"On-chain Select latency for{block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
-            fw.write(f"On-chain Select latency for{block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
+            print(
+                f"On-chain Select latency for{block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
+            fw.write(
+                f"On-chain Select latency for{block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
             fw.write("\n")
 
             # print(
@@ -547,13 +550,6 @@ def main():
             print(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write("\n")
-
-            # 重置统计数据
-            # sql_middleware.index_building_times.clear()
-            # sql_middleware.block_generation_times.clear()
-            # sql_middleware.index_storage_costs.clear()
-            # sql_middleware.on_chain_index_building_times.clear()
-            # entry_id += 1
 
 
 if __name__ == "__main__":

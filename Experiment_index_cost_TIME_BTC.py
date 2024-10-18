@@ -1,15 +1,13 @@
 import hashlib
 import json
-import os
 import random
 from datetime import datetime, timedelta
-from pprint import pprint
 
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 
-from web3_NFT.SQL_MiddleWare import SQLMiddleware
+from SQL_MiddleWare import SQLMiddleware
 
 
 def generate_text_hash(text):

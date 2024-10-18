@@ -1,15 +1,11 @@
 import hashlib
 import json
-import os
 import random
 from datetime import datetime, timedelta
-from pprint import pprint
-
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
-from web3_NFT.SQL_MiddleWare import SQLMiddleware
+from SQL_MiddleWare import SQLMiddleware
 
 
 def generate_text_hash(text):
@@ -107,6 +103,7 @@ def main():
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")
             fw.write("\n")
+            print(f"----- Starting insert query for {block_size} blocks -----")
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 text_hash = data_list[i]['hash']
                 time_stamp = data_list[i]['time_stamp']
@@ -114,12 +111,13 @@ def main():
                 video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
                 sql_middleware.parse_query(insert_query)
+
+            print(f"----- Starting select query for {block_size} blocks -----")
+            for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 # 构建 SELECT 查询并调用 parse_query
                 a, b = generate_random_times(min_time, max_time)
                 select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
                 sql_middleware.parse_query(select_query)
-                # sql_middleware.parse_query(select_query)
-
             # 输出统计数据
             avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
             avg_block_generation_time = sum(sql_middleware.block_generation_times) / len(

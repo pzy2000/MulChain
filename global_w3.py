@@ -6,5 +6,3 @@ pyevm_backend = PyEVMBackend(genesis_parameters=custom_genesis_params)
 t = EthereumTester(backend=pyevm_backend)
 w3 = Web3(Web3.EthereumTesterProvider(t))  # 使用 EthereumTesterProvider 作为测试链
 w3.eth.default_account = w3.eth.accounts[0]
-
-

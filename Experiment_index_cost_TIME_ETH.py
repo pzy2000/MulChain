@@ -4,7 +4,8 @@ import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times_ETH
-
+import pandas as pd
+from datetime import datetime
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
@@ -56,8 +57,7 @@ def main():
 
     # 逐步增加块的数量，从 256 到 16384
 
-    import pandas as pd
-    from datetime import datetime
+
 
     # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
     df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)

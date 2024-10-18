@@ -1,6 +1,6 @@
-### README.md：区块链数据管理应用
+### README.md：DEPRECATED
 
-本 README 提供了设置和运行区块链数据管理应用的指南，该应用允许用户将多媒体数据存储在 IPFS 上，将元数据记录在以太坊上，并通过 GUI 与这些平台进行交互。
+DEPRECATED.TO BE UPDATED
 
 #### 系统要求
 - 操作系统：Windows、Mac OS X 或 Linux

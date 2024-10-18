@@ -12,10 +12,24 @@ from pybloom_live import BloomFilter  # 导入 Bloom 过滤器
 block_sizes = [16, 32, 64, 128, 256, 512, 1024]
 
 
-def generate_random_times(min_time, max_time):
+def generate_random_times_BTC(min_time, max_time):
     # 生成两个随机的时间差
     min_time = datetime.strptime(min_time, '%Y-%m-%d %H:%M:%S')
     max_time = datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
+    delta_a = random.randint(0, int((max_time - min_time).total_seconds()))
+    delta_b = random.randint(delta_a, int((max_time - min_time).total_seconds()))
+
+    # 计算 a 和 b 的具体时间
+    a = min_time + timedelta(seconds=delta_a)
+    b = min_time + timedelta(seconds=delta_b)
+
+    return a, a
+
+
+def generate_random_times_ETH(min_time, max_time):
+    # 生成两个随机的时间差
+    min_time = datetime.strptime(min_time, '%Y-%m-%d')
+    max_time = datetime.strptime(max_time, '%Y-%m-%d')
     delta_a = random.randint(0, int((max_time - min_time).total_seconds()))
     delta_b = random.randint(delta_a, int((max_time - min_time).total_seconds()))
 

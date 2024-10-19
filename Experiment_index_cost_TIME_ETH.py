@@ -7,6 +7,7 @@ from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times_ETH
 import pandas as pd
 from datetime import datetime
 
+
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 

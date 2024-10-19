@@ -2,9 +2,9 @@ import hashlib
 import json
 from datetime import datetime
 import ipfshttpclient
+import pandas as pd
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-import pickle
 from SQL_MiddleWare import SQLMiddleware, block_sizes
 
 
@@ -56,14 +56,24 @@ def main():
     contract_instance = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
-    with open('data_list.pkl', 'rb') as f:
-        data_list = pickle.load(f)
+    # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
+    df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
+
+    # 将数据转换为指定格式的列表，并格式化时间戳为 %Y-%m-%d
+    data_list = [
+        {
+            'hash': row['transactionHash'],
+            'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d')
+        }
+        for _, row in df.iterrows()
+    ]
 
     # 验证是否成功读取
     print(f"Loaded {len(data_list)} items from data_list.pkl")
     with open("AAA_Fuzzy_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
 
         for j in range(0, len(block_sizes)):
+            # entry_id = 0
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")
@@ -77,14 +87,20 @@ def main():
                 sql_middleware.parse_query(insert_query)
                 # 构建 SELECT 查询并调用 parse_query
                 select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '201%'"
+                # print("here")
                 result = sql_middleware.parse_query(select_query)
+                # if result:
                 print(result)
+                # sql_middleware.parse_query(select_query)
 
             # 输出统计数据
             avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
             avg_block_generation_time = sum(sql_middleware.block_generation_times) / len(
                 sql_middleware.block_generation_times)
             avg_index_storage_cost = sum(sql_middleware.index_storage_costs) / len(sql_middleware.index_storage_costs)
+
+
+
 
             print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
             fw.write(
@@ -109,6 +125,13 @@ def main():
                 f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
             fw.write("\n")
 
+
+
+
+
+
+            # print(
+            #     f"avg Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times):.4f} seconds")
             print(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
             fw.write(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
             fw.write("\n")
@@ -119,10 +142,14 @@ def main():
                 f"avg On-Chain Index build time for {block_size} blocks: {sum(sql_middleware.on_chain_index_building_times) / len(sql_middleware.on_chain_index_building_times):.4f} seconds")
             fw.write("\n")
 
+            # print(
+            # f"avg Block generation time for {block_size} blocks: {sum(sql_middleware.block_generation_times) / len(sql_middleware.block_generation_times):.6f} seconds")
             print(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
             fw.write(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
             fw.write("\n")
 
+            # print(
+            # f"avg Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024 / len(sql_middleware.index_storage_costs):.8f} MB")
             print(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
             fw.write("\n")

@@ -55,9 +55,6 @@ def main():
     contract_instance = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
-    # 逐步增加块的数量，从 256 到 16384
-
-
 
     # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
     df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)

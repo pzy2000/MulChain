@@ -246,35 +246,39 @@ class SQLMiddleware:
             #         return results
             elif 'LIKE' in condition.upper():
                 prefix = self.extract_prefix_condition(condition)
-                results = []
                 # 先查询缓存中的数据
-                for entry_id, entry in self.cached_data.items():
-                    if entry['timestamp'].startswith(prefix):
-                        results.append(entry)
-                if results:
-                    on_chain_select_end_time = time.time()
-                    self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
-                    select_end_time = time.time()
-                    self.select_latency.append(select_end_time - select_start_time)
-                    return results
-                else:
-                    # 如果缓存中没有符合条件的数据，则从区块链中查询
-                    results = []
-                    for entry_id in range(self.contract.functions.entryCount().call()):
-                        data = self.contract.functions.getData(entry_id).call()
-                        if data[3].startswith(prefix):
-                            self.cached_data[str(entry_id)] = {
-                                "text_hash": data[0],
-                                "image_cid": data[1],
-                                "video_cid": data[2],
-                                "timestamp": data[3]
-                            }
-                            results.append(self.cached_data[str(entry_id)])
-                    on_chain_select_end_time = time.time()
-                    self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
-                    select_end_time = time.time()
-                    self.select_latency.append(select_end_time - select_start_time)
-                    return results
+                # for entry_id, entry in self.cached_data.items():
+                #     if entry['timestamp'].startswith(prefix):
+                #         results.append(entry)
+                # if results:
+                #     on_chain_select_end_time = time.time()
+                #     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                #     select_end_time = time.time()
+                #     self.select_latency.append(select_end_time - select_start_time)
+                #     return results
+                # else:
+                # 如果缓存中没有符合条件的数据，则从区块链中查询
+                results = []
+                for entry_id in range(self.contract.functions.entryCount().call()):
+                    data = self.contract.functions.getData(entry_id).call()
+                    if data[3].startswith(prefix):
+                        # self.cached_data[str(entry_id)] = {
+                        #     "text_hash": data[0],
+                        #     "image_cid": data[1],
+                        #     "video_cid": data[2],
+                        #     "timestamp": data[3]
+                        # }
+                        results.append({
+                            "text_hash": data[0],
+                            "image_cid": data[1],
+                            "video_cid": data[2],
+                            "timestamp": data[3]
+                        })
+                on_chain_select_end_time = time.time()
+                self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                select_end_time = time.time()
+                self.select_latency.append(select_end_time - select_start_time)
+                return results
             else:
                 # 单条记录查询
                 entry_id = int(condition.split('=')[1].strip())

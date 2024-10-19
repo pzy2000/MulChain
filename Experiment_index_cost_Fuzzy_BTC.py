@@ -14,8 +14,6 @@ def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
-
-
 # print(random_date)
 
 def main():
@@ -69,6 +67,8 @@ def main():
         time_stamp_list.append(data['time_stamp'])
     min_time = min(time_stamp_list)
     max_time = max(time_stamp_list)
+    min_time = datetime.strptime(min_time, '%Y-%m-%d %H:%M:%S')
+    max_time = datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
     print("min_time:", min_time)
     print("max_time:", max_time)
     # 验证是否成功读取
@@ -87,21 +87,17 @@ def main():
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
                 sql_middleware.parse_query(insert_query)
                 # 构建 SELECT 查询并调用 parse_query
-                select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '201%'"
-                result = sql_middleware.parse_query(select_query)
-                print(result)
 
-            for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
+            for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 # 构建 SELECT 查询并调用 parse_query
                 # 定义最小和最大时间
-
-
                 # 生成随机日期
                 random_date = generate_random_date(min_time, max_time)
                 random_date += '%'
                 select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '{random_date}'"
                 result = sql_middleware.parse_query(select_query)
-                print(result)
+                if result:
+                    print(result)
 
             # 输出统计数据
             avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
@@ -130,6 +126,18 @@ def main():
                 f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
             fw.write(
                 f"Index storage cost for {block_size} blocks: {sum(sql_middleware.index_storage_costs) / 1024:.8f} MB")
+            fw.write("\n")
+
+            print(
+                f"Select ADDER latency for {block_size} blocks: {sum(sql_middleware.select_adder_latency) / len(sql_middleware.select_adder_latency):.4f} seconds")
+            fw.write(
+                f"Select ADDER latency for {block_size} blocks: {sum(sql_middleware.select_adder_latency) / len(sql_middleware.select_adder_latency):.4f} seconds")
+            fw.write("\n")
+
+            print(
+                f"On-chain Select latency for {block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
+            fw.write(
+                f"On-chain Select latency for {block_size} blocks: {sum(sql_middleware.select_on_chain_latency) / len(sql_middleware.select_on_chain_latency):.4f} seconds")
             fw.write("\n")
 
             print(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")

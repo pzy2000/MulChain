@@ -181,8 +181,12 @@ class SQLMiddleware:
                     results = []
                     results1 = []
                     # results2 = []
+                    wasted_time = 0
+                    wasted_time_s = time.time()
                     gas_b = self.contract.functions.getDataByTimeRange(start_time, end_time).estimate_gas(
                         {'from': w3.eth.default_account})
+                    wasted_time_e = time.time()
+                    wasted_time += wasted_time_e - wasted_time_s
                     data_btree = self.contract.functions.getDataByTimeRange(start_time, end_time).call()
 
                     self.vo_btree_size_kb.append(gas_b / gas_per_kb)
@@ -204,13 +208,19 @@ class SQLMiddleware:
                     on_chain_select_end_time = time.time()
                     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
-                    self.select_latency.append(select_end_time - select_start_time)
+                    self.select_latency.append(select_end_time - select_start_time - wasted_time)
+                    wasted_time = 0
                     prev_gas_a = None
                     for entry_id in range(self.contract.functions.entryCount().call()):
+
                         data_adder = self.contract.functions.getData(entry_id).call()
+                        wasted_time_s = time.time()
+
                         gas_a = self.contract.functions.getData(entry_id).estimate_gas(
                             {'from': w3.eth.default_account}) if entry_id == 0 else prev_gas_a
                         prev_gas_a = gas_a if entry_id == 0 else prev_gas_a
+                        wasted_time_e = time.time()
+                        wasted_time += wasted_time_e - wasted_time_s
                         self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                         if start_time <= data_adder[3] <= end_time:
                             results1.append({
@@ -221,7 +231,7 @@ class SQLMiddleware:
                             })
                             # results.append(self.cached_data[str(entry_id)])
                     select_adder_end_time = time.time()
-                    self.select_adder_latency.append(select_adder_end_time - select_end_time)
+                    self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time)
                     data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
                     select_bhash_end_time = time.time()
                     self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time)
@@ -234,42 +244,8 @@ class SQLMiddleware:
                         print("length of data_BHash: ", data_bhash)
                     return results
             # 检查是否是前缀匹配查询
-            # elif 'LIKE' in condition.upper():
-            #     prefix = self.extract_prefix_condition(condition)
-            #     # print("prefix", prefix)
-            #     results = []
-            #     # 先查询缓存中的数据
-            #     if str(prefix) in self.cached_data:
-            #         results.append(self.cached_data[str(prefix)])
-            #     if results:
-            #         return results
-            #     else:
-            #         # 如果缓存中没有符合条件的数据，则从区块链中查询
-            #         results = []
-            #         data = self.contract.functions.getDataByPrefix(prefix).call()
-            #         if data[3]:
-            #             self.cached_data[str(prefix)] = {
-            #                 "text_hash": data[0],
-            #                 "image_cid": data[1],
-            #                 "video_cid": data[2],
-            #                 "timestamp": data[3]
-            #             }
-            #             results.append(self.cached_data[str(prefix)])
-            #         return results
             elif 'LIKE' in condition.upper():
                 prefix = self.extract_prefix_condition(condition)
-                # 先查询缓存中的数据
-                # for entry_id, entry in self.cached_data.items():
-                #     if entry['timestamp'].startswith(prefix):
-                #         results.append(entry)
-                # if results:
-                #     on_chain_select_end_time = time.time()
-                #     self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
-                #     select_end_time = time.time()
-                #     self.select_latency.append(select_end_time - select_start_time)
-                #     return results
-                # else:
-                # 如果缓存中没有符合条件的数据，则从区块链中查询
                 results = []
                 wasted_time = 0
                 for entry_id in range(self.contract.functions.entryCount().call()):
@@ -281,12 +257,6 @@ class SQLMiddleware:
                     wasted_time_end = time.time()
                     wasted_time += wasted_time_end - wasted_time_start
                     if data[3].startswith(prefix):
-                        # self.cached_data[str(entry_id)] = {
-                        #     "text_hash": data[0],
-                        #     "image_cid": data[1],
-                        #     "video_cid": data[2],
-                        #     "timestamp": data[3]
-                        # }
                         results.append({
                             "text_hash": data[0],
                             "image_cid": data[1],
@@ -303,10 +273,10 @@ class SQLMiddleware:
                 select_end_time_trie = time.time()
                 self.select_Trie_latency.append(select_end_time_trie - select_start_time_trie)
                 results_trie = data_trie
-                if results != results_trie:
+                if results != results_trie and (len(results) != 0 and results_trie[0]):
                     print("results mismatch")
-                    print("length of results: ", len(results))
-                    print("length of results_trie: ", len(results_trie))
+                    print("results: ", results)
+                    print("results_trie: ", results_trie)
                 gas_t = self.contract.functions.getDataByFuzzy(prefix).estimate_gas(
                     {'from': w3.eth.default_account})
                 self.vo_trie_size_kb.append(gas_t / gas_per_kb)

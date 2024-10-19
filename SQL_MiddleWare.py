@@ -210,26 +210,41 @@ class SQLMiddleware:
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time - wasted_time)
                     wasted_time = 0
-                    prev_gas_a = None
-                    for entry_id in range(self.contract.functions.entryCount().call()):
+                    # prev_gas_a = None
+                    # for entry_id in range(self.contract.functions.entryCount().call()):
+                    #
+                    #     data_adder = self.contract.functions.getData(entry_id).call()
+                    #     wasted_time_s = time.time()
+                    #
+                    #     gas_a = self.contract.functions.getData(entry_id).estimate_gas(
+                    #         {'from': w3.eth.default_account}) if entry_id == 0 else prev_gas_a
+                    #     prev_gas_a = gas_a if entry_id == 0 else prev_gas_a
+                    #     wasted_time_e = time.time()
+                    #     wasted_time += wasted_time_e - wasted_time_s
+                    #     self.vo_adder_size_kb.append(gas_a / gas_per_kb)
+                    #     if start_time <= data_adder[3] <= end_time:
+                    #         results1.append({
+                    #             "text_hash": data_adder[0],
+                    #             "image_cid": data_adder[1],
+                    #             "video_cid": data_adder[2],
+                    #             "timestamp": data_adder[3]
+                    #         })
 
-                        data_adder = self.contract.functions.getData(entry_id).call()
-                        wasted_time_s = time.time()
-
-                        gas_a = self.contract.functions.getData(entry_id).estimate_gas(
-                            {'from': w3.eth.default_account}) if entry_id == 0 else prev_gas_a
-                        prev_gas_a = gas_a if entry_id == 0 else prev_gas_a
-                        wasted_time_e = time.time()
-                        wasted_time += wasted_time_e - wasted_time_s
-                        self.vo_adder_size_kb.append(gas_a / gas_per_kb)
-                        if start_time <= data_adder[3] <= end_time:
-                            results1.append({
-                                "text_hash": data_adder[0],
-                                "image_cid": data_adder[1],
-                                "video_cid": data_adder[2],
-                                "timestamp": data_adder[3]
-                            })
                             # results.append(self.cached_data[str(entry_id)])
+                    data_adder = self.contract.functions.getDataByTimeAdder(start_time, end_time).call()
+                    wasted_time_s = time.time()
+                    gas_a = self.contract.functions.getDataByTimeAdder(start_time, end_time).estimate_gas(
+                                {'from': w3.eth.default_account})
+                    results1.append({
+                                    "text_hash": data_adder[0],
+                                    "image_cid": data_adder[1],
+                                    "video_cid": data_adder[2],
+                                    "timestamp": data_adder[3]
+                                })
+                    self.vo_adder_size_kb.append(gas_a / gas_per_kb)
+                    wasted_time_e = time.time()
+                    wasted_time += wasted_time_e - wasted_time_s
+                    self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                     select_adder_end_time = time.time()
                     self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time)
                     data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
@@ -238,10 +253,11 @@ class SQLMiddleware:
                     gas_bh = self.contract.functions.getDataByTime_BHash(start_time, end_time).estimate_gas(
                         {'from': w3.eth.default_account})
                     self.vo_bhashtree_size_kb.append(gas_bh / gas_per_kb)
-                    if data_btree != data_bhash:
+                    if data_btree != data_bhash or data_adder != data_bhash:
                         print("data_btree mismatch")
-                        print("length of data_BTree: ", data_btree)
-                        print("length of data_BHash: ", data_bhash)
+                        print("data_adder: ", data_adder)
+                        print("data_BTree: ", data_btree)
+                        print("data_BHash: ", data_bhash)
                     return results
             # 检查是否是前缀匹配查询
             elif 'LIKE' in condition.upper():

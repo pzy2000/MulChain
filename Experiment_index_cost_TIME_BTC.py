@@ -6,6 +6,7 @@ import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times_BTC
+from global_w3 import gas_per_kb
 
 
 def generate_text_hash(text):
@@ -144,7 +145,23 @@ def main():
             fw.write("\n")
 
 
+            print(
+                f"Adder_gas for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) * gas_per_kb / len(sql_middleware.vo_adder_size_kb):.4f}")
+            fw.write(
+                f"Adder_gas for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) * gas_per_kb / len(sql_middleware.vo_adder_size_kb):.4f}")
+            fw.write("\n")
 
+            print(
+                f"btree_gas for {block_size} blocks: {sum(sql_middleware.vo_btree_size_kb)* gas_per_kb / len(sql_middleware.vo_btree_size_kb):.4f} ")
+            fw.write(
+                f"btree_gas for {block_size} blocks: {sum(sql_middleware.vo_btree_size_kb)* gas_per_kb / len(sql_middleware.vo_btree_size_kb):.4f} ")
+            fw.write("\n")
+
+            print(
+                f"bhashtree_gas for {block_size} blocks: {sum(sql_middleware.vo_bhashtree_size_kb)* gas_per_kb / len(sql_middleware.vo_bhashtree_size_kb):.4f}")
+            fw.write(
+                f"bhashtree_gas for {block_size} blocks: {sum(sql_middleware.vo_bhashtree_size_kb)* gas_per_kb / len(sql_middleware.vo_bhashtree_size_kb):.4f}")
+            fw.write("\n")
 
 
             print(

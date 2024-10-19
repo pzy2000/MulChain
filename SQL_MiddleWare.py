@@ -41,6 +41,18 @@ def generate_random_times_ETH(min_time, max_time):
     return a, a
 
 
+
+
+
+# 生成 min_time 到 max_time 之间的随机时间
+def generate_random_date(min_time, max_time):
+    delta = max_time - min_time
+    random_seconds = random.randint(0, int(delta.total_seconds()))
+    random_date = min_time + timedelta(seconds=random_seconds)
+    return random_date.strftime('%Y-%m-%d')
+
+
+
 class SQLMiddleware:
     def __init__(self, contract_instance, ipfs_client):
         self.contract = contract_instance
@@ -52,7 +64,6 @@ class SQLMiddleware:
         self.ipfs_cache = {}
         self.cached_path = {}
 
-
         # 初始化用于统计索引构建和区块生成的开销数据
         self.index_building_times = []
         self.on_chain_index_building_times = []
@@ -62,11 +73,12 @@ class SQLMiddleware:
         self.select_on_chain_latency = []
         self.select_adder_latency = []
         self.select_BHash_latency = []
-
+        self.select_Trie_latency = []
 
         self.vo_btree_size_kb = []
         self.vo_adder_size_kb = []
         self.vo_bhashtree_size_kb = []
+        self.vo_trie_size_kb = []
 
     def parse_query(self, query):
         # 使用 sqlparse 解析 SQL 查询
@@ -259,8 +271,15 @@ class SQLMiddleware:
                 # else:
                 # 如果缓存中没有符合条件的数据，则从区块链中查询
                 results = []
+                wasted_time = 0
                 for entry_id in range(self.contract.functions.entryCount().call()):
                     data = self.contract.functions.getData(entry_id).call()
+                    wasted_time_start = time.time()
+                    gas_a = self.contract.functions.getData(entry_id).estimate_gas(
+                        {'from': w3.eth.default_account})
+                    self.vo_adder_size_kb.append(gas_a / gas_per_kb)
+                    wasted_time_end = time.time()
+                    wasted_time += wasted_time_end - wasted_time_start
                     if data[3].startswith(prefix):
                         # self.cached_data[str(entry_id)] = {
                         #     "text_hash": data[0],
@@ -277,7 +296,20 @@ class SQLMiddleware:
                 on_chain_select_end_time = time.time()
                 self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
                 select_end_time = time.time()
-                self.select_latency.append(select_end_time - select_start_time)
+                self.select_adder_latency.append(select_end_time - select_start_time - wasted_time)
+                select_start_time_trie = time.time()
+
+                data_trie = self.contract.functions.getDataByFuzzy(prefix).call()
+                select_end_time_trie = time.time()
+                self.select_Trie_latency.append(select_end_time_trie - select_start_time_trie)
+                results_trie = data_trie
+                if results != results_trie:
+                    print("results mismatch")
+                    print("length of results: ", len(results))
+                    print("length of results_trie: ", len(results_trie))
+                gas_t = self.contract.functions.getDataByFuzzy(prefix).estimate_gas(
+                    {'from': w3.eth.default_account})
+                self.vo_trie_size_kb.append(gas_t / gas_per_kb)
                 return results
             else:
                 # 单条记录查询
@@ -451,3 +483,14 @@ class SQLMiddleware:
             raise ValueError("Condition not found in UPDATE statement.")
 
         return table_name, update_values, condition
+
+
+if __name__ == '__main__':
+    min_time = datetime.strptime('2010-03-15 12:49:08', '%Y-%m-%d %H:%M:%S')
+    max_time = datetime.strptime('2024-05-27 10:13:57', '%Y-%m-%d %H:%M:%S')
+    print("min_time:", min_time)
+    print("max_time:", max_time)
+    # 生成随机日期
+    random_date = generate_random_date(min_time, max_time)
+    random_date += '%'
+    print(random_date)

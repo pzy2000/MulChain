@@ -1,16 +1,22 @@
 import hashlib
 import json
+import pickle
 from datetime import datetime
+
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-import pickle
-from SQL_MiddleWare import SQLMiddleware, block_sizes
+
+from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_date
 
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
+
+
+
+# print(random_date)
 
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化
@@ -58,11 +64,16 @@ def main():
 
     with open('data_list.pkl', 'rb') as f:
         data_list = pickle.load(f)
-
+    time_stamp_list = []
+    for data in data_list:
+        time_stamp_list.append(data['time_stamp'])
+    min_time = min(time_stamp_list)
+    max_time = max(time_stamp_list)
+    print("min_time:", min_time)
+    print("max_time:", max_time)
     # 验证是否成功读取
     print(f"Loaded {len(data_list)} items from data_list.pkl")
     with open("AAA_Fuzzy_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
-
         for j in range(0, len(block_sizes)):
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
@@ -77,6 +88,18 @@ def main():
                 sql_middleware.parse_query(insert_query)
                 # 构建 SELECT 查询并调用 parse_query
                 select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '201%'"
+                result = sql_middleware.parse_query(select_query)
+                print(result)
+
+            for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
+                # 构建 SELECT 查询并调用 parse_query
+                # 定义最小和最大时间
+
+
+                # 生成随机日期
+                random_date = generate_random_date(min_time, max_time)
+                random_date += '%'
+                select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '{random_date}'"
                 result = sql_middleware.parse_query(select_query)
                 print(result)
 

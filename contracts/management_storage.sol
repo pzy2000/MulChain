@@ -24,8 +24,6 @@ contract MultiModalStorageManager {
         string[] keys; // 存储所有子节点的键
 }
 
-
-
     // 根节点
     TrieNode private root;
 
@@ -154,71 +152,71 @@ contract MultiModalStorageManager {
 
     // 插入到字典树的辅助函数
     function insertToTrie(string memory timestamp, uint256 entryId) internal {
-    TrieNode storage currentNode = root;
-    uint256 length = bytes(timestamp).length;
+        TrieNode storage currentNode = root;
+        uint256 length = bytes(timestamp).length;
 
-    for (uint256 i = 0; i < length; i++) {
-        string memory char = substring(timestamp, i, i + 1);
-        require(isValidChar(char), "Invalid character in timestamp");
+        for (uint256 i = 0; i < length; i++) {
+            string memory char = substring(timestamp, i, i + 1);
+            require(isValidChar(char), "Invalid character in timestamp");
 
-        // 如果子节点不存在，则创建并添加到keys数组
-        if (currentNode.children[char].isEnd == false && currentNode.children[char].entryId == 0 && currentNode.children[char].keys.length == 0) {
-            // 创建新节点
-            currentNode.children[char].isEnd = false;
-            // 将字符添加到keys数组
-            currentNode.keys.push(char);
+            // 如果子节点不存在，则创建并添加到keys数组
+            if (currentNode.children[char].isEnd == false && currentNode.children[char].entryId == 0 && currentNode.children[char].keys.length == 0) {
+                // 创建新节点
+                currentNode.children[char].isEnd = false;
+                // 将字符添加到keys数组
+                currentNode.keys.push(char);
+            }
+            // 移动到下一个节点
+            currentNode = currentNode.children[char];
         }
-        // 移动到下一个节点
-        currentNode = currentNode.children[char];
-    }
 
-    // 标记为数据条目结束节点
-    currentNode.isEnd = true;
-    currentNode.entryId = entryId;
+        // 标记为数据条目结束节点
+        currentNode.isEnd = true;
+        currentNode.entryId = entryId;
 }
 
 
     // 模糊查询接口
-function getDataByFuzzy(string memory _prefixTime) public view returns (string[] memory, string[] memory, string[] memory, string[] memory) {
-    TrieNode storage node = root;
-    uint256 length = bytes(_prefixTime).length;
+    function getDataByFuzzy(string memory _prefixTime) public view returns (string[] memory, string[] memory, string[] memory, string[] memory) {
+        TrieNode storage node = root;
+        uint256 length = bytes(_prefixTime).length;
 
-    // 遍历前缀找到对应的节点
-    for (uint256 i = 0; i < length; i++) {
-        string memory char = substring(_prefixTime, i, i + 1);
-        require(isValidChar(char), "Invalid character in prefix");
-        // 检查节点是否存在
-        if (node.children[char].keys.length == 0 && node.children[char].isEnd == false && node.children[char].entryId == 0) {
-            // 前缀不存在，返回空数组
-            string[] memory textHashes = new string[](0);
-            string[] memory imageCIDs = new string[](0);
-            string[] memory videoCIDs = new string[](0);
-            string[] memory timestamps = new string[](0);
-            return (textHashes, imageCIDs, videoCIDs, timestamps);
+        // 遍历前缀找到对应的节点
+        for (uint256 i = 0; i < length; i++) {
+            string memory char = substring(_prefixTime, i, i + 1);
+            require(isValidChar(char), "Invalid character in prefix");
+            // 检查节点是否存在
+            if (node.children[char].keys.length == 0 && node.children[char].isEnd == false && node.children[char].entryId == 0) {
+                // 前缀不存在，返回空数组
+                string[] memory textHashes = new string[](0);
+                string[] memory imageCIDs = new string[](0);
+                string[] memory videoCIDs = new string[](0);
+                string[] memory timestamps = new string[](0);
+                return (textHashes, imageCIDs, videoCIDs, timestamps);
+            }
+            node = node.children[char];
         }
-        node = node.children[char];
+
+        // 收集符合条件的所有数据条目
+        uint256[] memory resultEntryIds = new uint256[](entryCount);
+        uint256 count = 0;
+        count = collectEntries(node, resultEntryIds, count);
+
+        // 构建返回的数据数组
+        string[] memory textHashes = new string[](count);
+        string[] memory imageCIDs = new string[](count);
+        string[] memory videoCIDs = new string[](count);
+        string[] memory timestamps = new string[](count);
+        for (uint256 i = 0; i < count; i++) {
+            DataEntry memory entry = dataEntries[resultEntryIds[i]];
+            textHashes[i] = entry.textHash;
+            imageCIDs[i] = entry.imageCID;
+            videoCIDs[i] = entry.videoCID;
+            timestamps[i] = entry.timestamp;
+        }
+
+        return (textHashes, imageCIDs, videoCIDs, timestamps);
     }
-
-    // 收集符合条件的所有数据条目
-    uint256[] memory resultEntryIds = new uint256[](entryCount);
-    uint256 count = 0;
-    count = collectEntries(node, resultEntryIds, count);
-
-    // 构建返回的数据数组
-    string[] memory textHashes = new string[](count);
-    string[] memory imageCIDs = new string[](count);
-    string[] memory videoCIDs = new string[](count);
-    string[] memory timestamps = new string[](count);
-    for (uint256 i = 0; i < count; i++) {
-        DataEntry memory entry = dataEntries[resultEntryIds[i]];
-        textHashes[i] = entry.textHash;
-        imageCIDs[i] = entry.imageCID;
-        videoCIDs[i] = entry.videoCID;
-        timestamps[i] = entry.timestamp;
-    }
-
-    return (textHashes, imageCIDs, videoCIDs, timestamps);
-}
 
 
     // 时间范围查询的方法，返回在指定时间范围内的数据条目
@@ -257,6 +255,47 @@ function getDataByFuzzy(string memory _prefixTime) public view returns (string[]
         }
         return (textHashes, imageCIDs, videoCIDs, timestamps);
     }
+
+    function getDataByTimeAdder(string memory _startTime, string memory _endTime) public view returns (string[] memory, string[] memory, string[] memory, string[] memory) {
+        uint256 startKey = stringToUint(_startTime);
+        uint256 endKey = stringToUint(_endTime);
+
+        // 计算所需数组的最大可能大小
+        string[] memory tempTextHashes = new string[](entryCount);
+        string[] memory tempImageCIDs = new string[](entryCount);
+        string[] memory tempVideoCIDs = new string[](entryCount);
+        string[] memory tempTimestamps = new string[](entryCount);
+
+        uint256 count = 0;
+
+        for (uint256 j = 0; j < entryCount; j++) {
+            DataEntry memory entry = dataEntries[j];
+            uint256 timeKey = stringToUint(entry.timestamp);
+            if (startKey <= timeKey && timeKey <= endKey) {
+                tempTextHashes[count] = entry.textHash;
+                tempImageCIDs[count] = entry.imageCID;
+                tempVideoCIDs[count] = entry.videoCID;
+                tempTimestamps[count] = entry.timestamp;
+                count++;
+            }
+        }
+
+        // 根据实际数量创建结果数组
+        string[] memory textHashes = new string[](count);
+        string[] memory imageCIDs = new string[](count);
+        string[] memory videoCIDs = new string[](count);
+        string[] memory timestamps = new string[](count);
+
+        // 复制数据到正确大小的数组中
+        for (uint256 i = 0; i < count; i++) {
+            textHashes[i] = tempTextHashes[i];
+            imageCIDs[i] = tempImageCIDs[i];
+            videoCIDs[i] = tempVideoCIDs[i];
+            timestamps[i] = tempTimestamps[i];
+        }
+
+        return (textHashes, imageCIDs, videoCIDs, timestamps);
+}
 
     // 辅助函数，将字符串转换为uint256
     function stringToUint(string memory s) internal pure returns (uint256) {
@@ -333,28 +372,28 @@ function getDataByFuzzy(string memory _prefixTime) public view returns (string[]
 
     // 辅助函数：收集从某个节点开始的所有数据条目
     function collectEntries(TrieNode storage node, uint256[] memory resultEntryIds, uint256 count) internal view returns (uint256) {
-    if (node.isEnd) {
-        resultEntryIds[count] = node.entryId;
-        count++;
-    }
+        if (node.isEnd) {
+            resultEntryIds[count] = node.entryId;
+            count++;
+        }
 
-    // 遍历所有子节点
-    for (uint256 i = 0; i < node.keys.length; i++) {
-        string memory key = node.keys[i];
-        TrieNode storage childNode = node.children[key];
-        count = collectEntries(childNode, resultEntryIds, count);
-    }
-    return count;
+        // 遍历所有子节点
+        for (uint256 i = 0; i < node.keys.length; i++) {
+            string memory key = node.keys[i];
+            TrieNode storage childNode = node.children[key];
+            count = collectEntries(childNode, resultEntryIds, count);
+        }
+        return count;
 }
 
     // 辅助函数：检查字符是否有效
     function isValidChar(string memory char) internal view returns (bool) {
-    for (uint8 i = 0; i < validChars.length; i++) {
-        if (keccak256(abi.encodePacked(char)) == keccak256(abi.encodePacked(validChars[i]))) {
-            return true;
+        for (uint8 i = 0; i < validChars.length; i++) {
+            if (keccak256(abi.encodePacked(char)) == keccak256(abi.encodePacked(validChars[i]))) {
+                return true;
+            }
         }
-    }
-    return false;
+        return false;
 }
 
 

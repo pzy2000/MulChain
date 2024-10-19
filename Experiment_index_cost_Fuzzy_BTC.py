@@ -129,6 +129,25 @@ def main():
             fw.write("\n")
 
             print(
+                f"vo_adder_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) / 1024:.8f} MB")
+            fw.write(
+                f"vo_adder_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) / 1024:.8f} MB")
+            fw.write("\n")
+
+            print(
+                f"vo_btree_size for {block_size} blocks: {sum(sql_middleware.vo_btree_size_kb) / 1024:.8f} MB")
+            fw.write(
+                f"vo_btree_size for {block_size} blocks: {sum(sql_middleware.vo_btree_size_kb) / 1024:.8f} MB")
+            fw.write("\n")
+
+            print(
+                f"vo_bhashtree_size for {block_size} blocks: {sum(sql_middleware.vo_bhashtree_size_kb) / 1024:.8f} MB")
+            fw.write(
+                f"vo_bhashtree_size for {block_size} blocks: {sum(sql_middleware.vo_bhashtree_size_kb) / 1024:.8f} MB")
+            fw.write("\n")
+
+
+            print(
                 f"Select ADDER latency for {block_size} blocks: {sum(sql_middleware.select_adder_latency) / len(sql_middleware.select_adder_latency):.4f} seconds")
             fw.write(
                 f"Select ADDER latency for {block_size} blocks: {sum(sql_middleware.select_adder_latency) / len(sql_middleware.select_adder_latency):.4f} seconds")

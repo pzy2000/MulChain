@@ -63,7 +63,7 @@ def main():
     data_list = [
         {
             'hash': row['transactionHash'],
-            'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d')
+            'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H:%M:%S')
         }
         for _, row in df.iterrows()
     ]

@@ -5,6 +5,8 @@ contract MultiModalStorageManager {
     string public greeting;
     event Log(string);
     event Log(uint256);
+    event Log(bytes);
+    event Log(bytes1);
 
     // 定义一个结构体来存储每个数据条目的信息
     struct DataEntry {
@@ -14,11 +16,25 @@ contract MultiModalStorageManager {
         string timestamp;   // 存储数据条目的时间戳
     }
 
+    // Trie节点结构
+    struct TrieNode {
+        bool isEnd; // 标记是否是一个数据条目的结束
+        uint256 entryId; // 如果是数据条目结束节点，记录entryId
+        mapping(string => TrieNode) children; // 子节点映射，键为字符串
+        string[] keys; // 存储所有子节点的键
+}
+
+
+
+    // 根节点
+    TrieNode private root;
+
     // 使用映射来存储所有数据条目，键为数据条目的ID，值为DataEntry结构体
     mapping(uint256 => DataEntry) public dataEntries;
     uint256 public entryCount;  // 存储数据条目的计数器
+    string[13] public validChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", ":", " "];
 
-// 更新后的 B+ 树节点结构体定义
+    // 更新后的 B+ 树节点结构体定义
     struct BPlusTreeNode {
         bool isLeaf; // 是否是叶子节点
         bool isHashNode; // 是否是哈希节点
@@ -35,32 +51,17 @@ contract MultiModalStorageManager {
     mapping(uint256 => BPlusTreeNode) public bPlusTreeNodes;
     uint256 public rootId;  // 根节点ID
     uint256 public nodeCount; // 节点计数器
-
     // 定义一个事件，在数据存储时触发，方便监听存储操作
     event DataStored(uint256 indexed entryId, string textHash, string imageCID, string videoCID, string timestamp);
     event NodeCreated(uint256 nodeId, bool isLeaf, uint256[] keys);
 
-//    // 构造函数，初始化合约的greeting变量和根节点
-//    constructor() public {
-//        greeting = 'Hello';
-//        // 初始化根节点为叶子节点且不是哈希节点
-//        rootId = nodeCount;
-//        bPlusTreeNodes[rootId] = BPlusTreeNode({
-//            isLeaf: true,
-//            isHashNode: false,  // 初始化时根节点不是哈希节点
-//            keys: new uint256[](0),
-//            children: new uint256[](0),
-//            dataEntryIds: new uint256[](0)
-//        });
-//        nodeCount++;
-//        emit NodeCreated(rootId, true, new uint256[](0));
-//    }
     // 构造函数，初始化合约的greeting变量和根节点
     constructor() public {
         greeting = 'Hello';
         // 初始化根节点为叶子节点且不是哈希节点
         rootId = nodeCount;
 
+        root.isEnd = false;
         // 创建一个新的 BPlusTreeNode 实例并逐步赋值
         BPlusTreeNode storage rootNode = bPlusTreeNodes[rootId];
         rootNode.isLeaf = true;
@@ -74,7 +75,6 @@ contract MultiModalStorageManager {
     }
 
 
-
     // 存储数据的方法，返回存储数据的条目ID
     function storeData(string memory _textHash, string memory _imageCID, string memory _videoCID, string memory _timestamp) public returns (uint256) {
         // 创建一个新的数据条目并存储在映射中
@@ -85,7 +85,9 @@ contract MultiModalStorageManager {
             timestamp: _timestamp
         });
 
-        // 触发数据存储事件，方便监听
+        // 插入到字典树中
+        insertToTrie(_timestamp, entryCount);
+
         emit DataStored(entryCount, _textHash, _imageCID, _videoCID, _timestamp);
 
         // 将数据条目插入到B+树中
@@ -126,31 +128,97 @@ contract MultiModalStorageManager {
     }
 
     // 插入到B+树中的方法
-function insertToBPlusTree(uint256 entryId, string memory timestamp) internal {
-    uint256 timeKey = stringToUint(timestamp);
-    BPlusTreeNode storage rootNode = bPlusTreeNodes[rootId];
+    function insertToBPlusTree(uint256 entryId, string memory timestamp) internal {
+        uint256 timeKey = stringToUint(timestamp);
+        BPlusTreeNode storage rootNode = bPlusTreeNodes[rootId];
 
-    // 检查是否需要转换为哈希节点
-    if (rootNode.isLeaf && rootNode.dataEntryIds.length >= 10 && !rootNode.isHashNode) {
-        rootNode.isHashNode = true;
-        for (uint256 i = 0; i < rootNode.dataEntryIds.length; i++) {
-            uint256 key = rootNode.keys[i];
-            rootNode.hashDataEntries[key].push(rootNode.dataEntryIds[i]);
+        // 检查是否需要转换为哈希节点
+        if (rootNode.isLeaf && rootNode.dataEntryIds.length >= 10 && !rootNode.isHashNode) {
+            rootNode.isHashNode = true;
+            for (uint256 i = 0; i < rootNode.dataEntryIds.length; i++) {
+                uint256 key = rootNode.keys[i];
+                rootNode.hashDataEntries[key].push(rootNode.dataEntryIds[i]);
+            }
+            // rootNode.keys = new uint256 ; // 清空 keys 和 dataEntryIds
+            // rootNode.dataEntryIds = new uint256 ;
         }
-        // rootNode.keys = new uint256 ; // 清空 keys 和 dataEntryIds
-        // rootNode.dataEntryIds = new uint256 ;
+
+        // 插入到哈希节点
+        if (rootNode.isHashNode) {
+            rootNode.hashDataEntries[timeKey].push(entryId);
+        } else {
+            rootNode.keys.push(timeKey);
+            rootNode.dataEntryIds.push(entryId);
+        }
     }
 
-    // 插入到哈希节点
-    if (rootNode.isHashNode) {
-        rootNode.hashDataEntries[timeKey].push(entryId);
-    } else {
-        rootNode.keys.push(timeKey);
-        rootNode.dataEntryIds.push(entryId);
+    // 插入到字典树的辅助函数
+    function insertToTrie(string memory timestamp, uint256 entryId) internal {
+    TrieNode storage currentNode = root;
+    uint256 length = bytes(timestamp).length;
+
+    for (uint256 i = 0; i < length; i++) {
+        string memory char = substring(timestamp, i, i + 1);
+        require(isValidChar(char), "Invalid character in timestamp");
+
+        // 如果子节点不存在，则创建并添加到keys数组
+        if (currentNode.children[char].isEnd == false && currentNode.children[char].entryId == 0 && currentNode.children[char].keys.length == 0) {
+            // 创建新节点
+            currentNode.children[char].isEnd = false;
+            // 将字符添加到keys数组
+            currentNode.keys.push(char);
+        }
+        // 移动到下一个节点
+        currentNode = currentNode.children[char];
     }
+
+    // 标记为数据条目结束节点
+    currentNode.isEnd = true;
+    currentNode.entryId = entryId;
 }
 
 
+    // 模糊查询接口
+function getDataByFuzzy(string memory _prefixTime) public view returns (string[] memory, string[] memory, string[] memory, string[] memory) {
+    TrieNode storage node = root;
+    uint256 length = bytes(_prefixTime).length;
+
+    // 遍历前缀找到对应的节点
+    for (uint256 i = 0; i < length; i++) {
+        string memory char = substring(_prefixTime, i, i + 1);
+        require(isValidChar(char), "Invalid character in prefix");
+        // 检查节点是否存在
+        if (node.children[char].keys.length == 0 && node.children[char].isEnd == false && node.children[char].entryId == 0) {
+            // 前缀不存在，返回空数组
+            string[] memory textHashes = new string[](0);
+            string[] memory imageCIDs = new string[](0);
+            string[] memory videoCIDs = new string[](0);
+            string[] memory timestamps = new string[](0);
+            return (textHashes, imageCIDs, videoCIDs, timestamps);
+        }
+        node = node.children[char];
+    }
+
+    // 收集符合条件的所有数据条目
+    uint256[] memory resultEntryIds = new uint256[](entryCount);
+    uint256 count = 0;
+    count = collectEntries(node, resultEntryIds, count);
+
+    // 构建返回的数据数组
+    string[] memory textHashes = new string[](count);
+    string[] memory imageCIDs = new string[](count);
+    string[] memory videoCIDs = new string[](count);
+    string[] memory timestamps = new string[](count);
+    for (uint256 i = 0; i < count; i++) {
+        DataEntry memory entry = dataEntries[resultEntryIds[i]];
+        textHashes[i] = entry.textHash;
+        imageCIDs[i] = entry.imageCID;
+        videoCIDs[i] = entry.videoCID;
+        timestamps[i] = entry.timestamp;
+    }
+
+    return (textHashes, imageCIDs, videoCIDs, timestamps);
+}
 
 
     // 时间范围查询的方法，返回在指定时间范围内的数据条目
@@ -188,34 +256,6 @@ function insertToBPlusTree(uint256 entryId, string memory timestamp) internal {
             timestamps[j] = entry.timestamp;
         }
         return (textHashes, imageCIDs, videoCIDs, timestamps);
-    }
-
-    // 辅助函数，用于比较字符串（例如比较时间戳）
-    function compareStrings(string memory a, string memory b) internal pure returns (int) {
-        bytes memory aBytes = bytes(a);
-        bytes memory bBytes = bytes(b);
-        uint minLength = aBytes.length;
-        if (bBytes.length < minLength) {
-            minLength = bBytes.length;
-        }
-
-        // 字符逐个比较，找到第一个不相等的字符
-        for (uint i = 0; i < minLength; i++) {
-            if (aBytes[i] < bBytes[i]) {
-                return -1;  // a 小于 b
-            } else if (aBytes[i] > bBytes[i]) {
-                return 1;   // a 大于 b
-            }
-        }
-
-        // 如果所有字符都相等，比较字符串长度
-        if (aBytes.length < bBytes.length) {
-            return -1;  // a 长度小于 b
-        } else if (aBytes.length > bBytes.length) {
-            return 1;   // a 长度大于 b
-        } else {
-            return 0;   // a 和 b 完全相等
-        }
     }
 
     // 辅助函数，将字符串转换为uint256
@@ -289,7 +329,52 @@ function insertToBPlusTree(uint256 entryId, string memory timestamp) internal {
             }
         }
         return count;
+    }
+
+    // 辅助函数：收集从某个节点开始的所有数据条目
+    function collectEntries(TrieNode storage node, uint256[] memory resultEntryIds, uint256 count) internal view returns (uint256) {
+    if (node.isEnd) {
+        resultEntryIds[count] = node.entryId;
+        count++;
+    }
+
+    // 遍历所有子节点
+    for (uint256 i = 0; i < node.keys.length; i++) {
+        string memory key = node.keys[i];
+        TrieNode storage childNode = node.children[key];
+        count = collectEntries(childNode, resultEntryIds, count);
+    }
+    return count;
 }
+
+    // 辅助函数：检查字符是否有效
+    function isValidChar(string memory char) internal view returns (bool) {
+    for (uint8 i = 0; i < validChars.length; i++) {
+        if (keccak256(abi.encodePacked(char)) == keccak256(abi.encodePacked(validChars[i]))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+    function substring(string memory str, uint startIndex, uint endIndex) internal pure returns (string memory) {
+        bytes memory strBytes = bytes(str);
+        bytes memory result = new bytes(endIndex - startIndex);
+        for(uint i = startIndex; i < endIndex; i++) {
+            result[i - startIndex] = strBytes[i];
+        }
+        return string(result);
+    }
+
+
+    // 辅助函数：返回有效字符
+
+    function getValidChar(uint8 index) internal view returns (string memory) {
+        require(index < 13, "Invalid index");
+        return validChars[index];
+    }
+
 
 }
 

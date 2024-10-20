@@ -14,7 +14,7 @@ interface IERC3156FlashBorrower {
      * @param token The loan currency.
      * @param amount The amount of tokens lent.
      * @param fee The additional amount of tokens to repay.
-     * @param data Arbitrary data structure, intended to contain user-defined parameters.
+     * @param Mulchain_v_CPU_Time_BTC Arbitrary Mulchain_v_CPU_Time_BTC structure, intended to contain user-defined parameters.
      * @return The keccak256 hash of "ERC3156FlashBorrower.onFlashLoan"
      */
     function onFlashLoan(

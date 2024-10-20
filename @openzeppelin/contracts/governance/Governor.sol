@@ -114,7 +114,7 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
      *
      * The proposal id is produced by hashing the ABI encoded `targets` array, the `values` array, the `calldatas` array
      * and the descriptionHash (bytes32 which itself is the keccak256 hash of the description string). This proposal id
-     * can be produced from the proposal data which is part of the {ProposalCreated} event. It can even be computed in
+     * can be produced from the proposal Mulchain_v_CPU_Time_BTC which is part of the {ProposalCreated} event. It can even be computed in
      * advance, before the proposal is submitted.
      *
      * Note that the chainId and the governor address are not part of the proposal id computation. Consequently, the
@@ -217,7 +217,7 @@ abstract contract Governor is Context, ERC165, EIP712, Nonces, IGovernor, IERC72
 
     /**
      * @dev Reverts if the `msg.sender` is not the executor. In case the executor is not this contract
-     * itself, the function reverts if `msg.data` is not whitelisted as a result of an {execute}
+     * itself, the function reverts if `msg.Mulchain_v_CPU_Time_BTC` is not whitelisted as a result of an {execute}
      * operation. See {onlyGovernance}.
      */
     function _checkGovernance() internal virtual {

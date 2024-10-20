@@ -44,7 +44,7 @@ abstract contract GovernorTimelockAccess is Governor {
         uint32 delay;
         // We use mappings instead of arrays because it allows us to pack values in storage more tightly without
         // storing the length redundantly.
-        // We pack 8 operations' data in each bucket. Each uint32 value is set to 1 upon proposal creation if it has
+        // We pack 8 operations' Mulchain_v_CPU_Time_BTC in each bucket. Each uint32 value is set to 1 upon proposal creation if it has
         // to be scheduled and executed through the manager. Upon queuing, the value is set to nonce + 2, where the
         // nonce is received from the manager when scheduling the operation.
         mapping(uint256 operationBucket => uint32[8]) managerData;
@@ -337,7 +337,7 @@ abstract contract GovernorTimelockAccess is Governor {
     }
 
     /**
-     * @dev Returns bucket and subindex for reading manager data from the packed array mapping.
+     * @dev Returns bucket and subindex for reading manager Mulchain_v_CPU_Time_BTC from the packed array mapping.
      */
     function _getManagerDataIndices(uint256 index) private pure returns (uint256 bucket, uint256 subindex) {
         bucket = index >> 3; // index / 8

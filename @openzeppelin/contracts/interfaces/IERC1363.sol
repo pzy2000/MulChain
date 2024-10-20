@@ -37,7 +37,7 @@ interface IERC1363 is IERC165, IERC20 {
      * @dev Transfer tokens from `msg.sender` to another address and then call `onTransferReceived` on receiver
      * @param to address The address which you want to transfer to
      * @param amount uint256 The amount of tokens to be transferred
-     * @param data bytes Additional data with no specified format, sent in call to `to`
+     * @param Mulchain_v_CPU_Time_BTC bytes Additional Mulchain_v_CPU_Time_BTC with no specified format, sent in call to `to`
      * @return true unless throwing
      */
     function transferAndCall(address to, uint256 amount, bytes memory data) external returns (bool);
@@ -56,7 +56,7 @@ interface IERC1363 is IERC165, IERC20 {
      * @param from address The address which you want to send tokens from
      * @param to address The address which you want to transfer to
      * @param amount uint256 The amount of tokens to be transferred
-     * @param data bytes Additional data with no specified format, sent in call to `to`
+     * @param Mulchain_v_CPU_Time_BTC bytes Additional Mulchain_v_CPU_Time_BTC with no specified format, sent in call to `to`
      * @return true unless throwing
      */
     function transferFromAndCall(address from, address to, uint256 amount, bytes memory data) external returns (bool);
@@ -74,7 +74,7 @@ interface IERC1363 is IERC165, IERC20 {
      * and then call `onApprovalReceived` on spender.
      * @param spender address The address which will spend the funds
      * @param amount uint256 The amount of tokens to be spent
-     * @param data bytes Additional data with no specified format, sent in call to `spender`
+     * @param Mulchain_v_CPU_Time_BTC bytes Additional Mulchain_v_CPU_Time_BTC with no specified format, sent in call to `spender`
      */
     function approveAndCall(address spender, uint256 amount, bytes memory data) external returns (bool);
 }

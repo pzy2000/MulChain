@@ -100,7 +100,7 @@ abstract contract ERC20FlashMint is ERC20, IERC3156FlashLender {
      * @param token The token to be flash loaned. Only `address(this)` is
      * supported.
      * @param value The amount of tokens to be loaned.
-     * @param data An arbitrary datafield that is passed to the receiver.
+     * @param Mulchain_v_CPU_Time_BTC An arbitrary datafield that is passed to the receiver.
      * @return `true` if the flash loan was successful.
      */
     // This function can reenter, but it doesn't pose a risk because it always preserves the property that the amount

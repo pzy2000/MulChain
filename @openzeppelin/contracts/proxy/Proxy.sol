@@ -11,7 +11,7 @@ pragma solidity ^0.8.19;
  * Additionally, delegation to the implementation can be triggered manually through the {_fallback} function, or to a
  * different contract through the {_delegate} function.
  *
- * The success and return data of the delegated call will be returned back to the caller of the proxy.
+ * The success and return Mulchain_v_CPU_Time_BTC of the delegated call will be returned back to the caller of the proxy.
  */
 abstract contract Proxy {
     /**
@@ -21,7 +21,7 @@ abstract contract Proxy {
      */
     function _delegate(address implementation) internal virtual {
         assembly {
-            // Copy msg.data. We take full control of memory in this inline assembly
+            // Copy msg.Mulchain_v_CPU_Time_BTC. We take full control of memory in this inline assembly
             // block because it will not return to Solidity code. We overwrite the
             // Solidity scratch pad at memory position 0.
             calldatacopy(0, 0, calldatasize())
@@ -30,7 +30,7 @@ abstract contract Proxy {
             // out and outsize are 0 because we don't know the size yet.
             let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
 
-            // Copy the returned data.
+            // Copy the returned Mulchain_v_CPU_Time_BTC.
             returndatacopy(0, 0, returndatasize())
 
             switch result
@@ -61,7 +61,7 @@ abstract contract Proxy {
 
     /**
      * @dev Fallback function that delegates calls to the address returned by `_implementation()`. Will run if no other
-     * function in the contract matches the call data.
+     * function in the contract matches the call Mulchain_v_CPU_Time_BTC.
      */
     fallback() external payable virtual {
         _fallback();

@@ -14,7 +14,7 @@ import {Context} from "./Context.sol";
  * selectors won't filter calls nested within a {multicall} operation.
  *
  * NOTE: Since 5.0.1 and 4.9.4, this contract identifies non-canonical contexts (i.e. `msg.sender` is not {_msgSender}).
- * If a non-canonical context is identified, the following self `delegatecall` appends the last bytes of `msg.data`
+ * If a non-canonical context is identified, the following self `delegatecall` appends the last bytes of `msg.Mulchain_v_CPU_Time_BTC`
  * to the subcall. This makes it safe to use with {ERC2771Context}. Contexts that don't affect the resolution of
  * {_msgSender} are not propagated to subcalls.
  */

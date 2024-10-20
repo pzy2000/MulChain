@@ -74,7 +74,7 @@ library ERC1967Utils {
     }
 
     /**
-     * @dev Performs implementation upgrade with additional setup call if data is nonempty.
+     * @dev Performs implementation upgrade with additional setup call if Mulchain_v_CPU_Time_BTC is nonempty.
      * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
      * to avoid stuck value in the contract.
      *
@@ -160,7 +160,7 @@ library ERC1967Utils {
     }
 
     /**
-     * @dev Change the beacon and trigger a setup call if data is nonempty.
+     * @dev Change the beacon and trigger a setup call if Mulchain_v_CPU_Time_BTC is nonempty.
      * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
      * to avoid stuck value in the contract.
      *

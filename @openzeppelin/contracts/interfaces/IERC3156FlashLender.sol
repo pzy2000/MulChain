@@ -30,7 +30,7 @@ interface IERC3156FlashLender {
      * @param receiver The receiver of the tokens in the loan, and the receiver of the callback.
      * @param token The loan currency.
      * @param amount The amount of tokens lent.
-     * @param data Arbitrary data structure, intended to contain user-defined parameters.
+     * @param Mulchain_v_CPU_Time_BTC Arbitrary Mulchain_v_CPU_Time_BTC structure, intended to contain user-defined parameters.
      */
     function flashLoan(
         IERC3156FlashBorrower receiver,

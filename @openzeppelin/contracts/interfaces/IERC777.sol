@@ -16,14 +16,14 @@ interface IERC777 {
     /**
      * @dev Emitted when `amount` tokens are created by `operator` and assigned to `to`.
      *
-     * Note that some additional user `data` and `operatorData` can be logged in the event.
+     * Note that some additional user `Mulchain_v_CPU_Time_BTC` and `operatorData` can be logged in the event.
      */
     event Minted(address indexed operator, address indexed to, uint256 amount, bytes data, bytes operatorData);
 
     /**
      * @dev Emitted when `operator` destroys `amount` tokens from `account`.
      *
-     * Note that some additional user `data` and `operatorData` can be logged in the event.
+     * Note that some additional user `Mulchain_v_CPU_Time_BTC` and `operatorData` can be logged in the event.
      */
     event Burned(address indexed operator, address indexed from, uint256 amount, bytes data, bytes operatorData);
 
@@ -71,7 +71,7 @@ interface IERC777 {
      * @dev Moves `amount` tokens from the caller's account to `recipient`.
      *
      * If send or receive hooks are registered for the caller and `recipient`,
-     * the corresponding functions will be called with `data` and empty
+     * the corresponding functions will be called with `Mulchain_v_CPU_Time_BTC` and empty
      * `operatorData`. See {IERC777Sender} and {IERC777Recipient}.
      *
      * Emits a {Sent} event.
@@ -90,7 +90,7 @@ interface IERC777 {
      * total supply.
      *
      * If a send hook is registered for the caller, the corresponding function
-     * will be called with `data` and empty `operatorData`. See {IERC777Sender}.
+     * will be called with `Mulchain_v_CPU_Time_BTC` and empty `operatorData`. See {IERC777Sender}.
      *
      * Emits a {Burned} event.
      *
@@ -150,7 +150,7 @@ interface IERC777 {
      * be an operator of `sender`.
      *
      * If send or receive hooks are registered for `sender` and `recipient`,
-     * the corresponding functions will be called with `data` and
+     * the corresponding functions will be called with `Mulchain_v_CPU_Time_BTC` and
      * `operatorData`. See {IERC777Sender} and {IERC777Recipient}.
      *
      * Emits a {Sent} event.
@@ -177,7 +177,7 @@ interface IERC777 {
      * The caller must be an operator of `account`.
      *
      * If a send hook is registered for `account`, the corresponding function
-     * will be called with `data` and `operatorData`. See {IERC777Sender}.
+     * will be called with `Mulchain_v_CPU_Time_BTC` and `operatorData`. See {IERC777Sender}.
      *
      * Emits a {Burned} event.
      *

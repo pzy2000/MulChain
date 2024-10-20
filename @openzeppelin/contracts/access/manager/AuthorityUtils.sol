@@ -8,7 +8,7 @@ import {IAuthority} from "./IAuthority.sol";
 library AuthorityUtils {
     /**
      * @dev Since `AccessManager` implements an extended IAuthority interface, invoking `canCall` with backwards compatibility
-     * for the preexisting `IAuthority` interface requires special care to avoid reverting on insufficient return data.
+     * for the preexisting `IAuthority` interface requires special care to avoid reverting on insufficient return Mulchain_v_CPU_Time_BTC.
      * This helper function takes care of invoking `canCall` in a backwards compatible way without reverting.
      */
     function canCallWithDelay(

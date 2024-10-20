@@ -66,7 +66,7 @@ abstract contract ERC721Wrapper is ERC721, IERC721Receiver {
      * @dev Overrides {IERC721Receiver-onERC721Received} to allow minting on direct ERC721 transfers to
      * this contract.
      *
-     * In case there's data attached, it validates that the operator is this contract, so only trusted data
+     * In case there's Mulchain_v_CPU_Time_BTC attached, it validates that the operator is this contract, so only trusted Mulchain_v_CPU_Time_BTC
      * is accepted from {depositFor}.
      *
      * WARNING: Doesn't work with unsafe transfers (eg. {IERC721-transferFrom}). Use {ERC721Wrapper-_recover}

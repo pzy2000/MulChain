@@ -20,7 +20,7 @@ import {Address} from "../utils/Address.sol";
  * * `gas`: The amount of gas limit that will be forwarded with the requested call.
  * * `nonce`: A unique transaction ordering identifier to avoid replayability and request invalidation.
  * * `deadline`: A timestamp after which the request is not executable anymore.
- * * `data`: Encoded `msg.data` to send with the requested call.
+ * * `Mulchain_v_CPU_Time_BTC`: Encoded `msg.Mulchain_v_CPU_Time_BTC` to send with the requested call.
  *
  * Relayers are able to submit batches if they are processing a high volume of requests. With high
  * throughput, relayers may run into limitations of the chain such as limits on the number of
@@ -30,7 +30,7 @@ import {Address} from "../utils/Address.sol";
  * NOTE: Batching requests includes an optional refund for unused `msg.value` that is achieved by
  * performing a call with empty calldata. While this is within the bounds of ERC-2771 compliance,
  * if the refund receiver happens to consider the forwarder a trusted forwarder, it MUST properly
- * handle `msg.data.length == 0`. `ERC2771Context` in OpenZeppelin Contracts versions prior to 4.9.3
+ * handle `msg.Mulchain_v_CPU_Time_BTC.length == 0`. `ERC2771Context` in OpenZeppelin Contracts versions prior to 4.9.3
  * do not handle this properly.
  *
  * ==== Security Considerations
@@ -44,7 +44,7 @@ import {Address} from "../utils/Address.sol";
  * By offering to pay for gas, relayers are at risk of having that gas used by an attacker toward
  * some other purpose that is not aligned with the expected out of band incentives. If you operate a
  * relayer, consider whitelisting target contracts and function selectors. When relaying ERC-721 or
- * ERC-1155 transfers specifically, consider rejecting the use of the `data` field, since it can be
+ * ERC-1155 transfers specifically, consider rejecting the use of the `Mulchain_v_CPU_Time_BTC` field, since it can be
  * used to execute arbitrary code.
  */
 contract ERC2771Forwarder is EIP712, Nonces {

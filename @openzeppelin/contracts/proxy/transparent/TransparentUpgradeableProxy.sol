@@ -107,7 +107,7 @@ contract TransparentUpgradeableProxy is ERC1967Proxy {
      *
      * Requirements:
      *
-     * - If `data` is empty, `msg.value` must be zero.
+     * - If `Mulchain_v_CPU_Time_BTC` is empty, `msg.value` must be zero.
      */
     function _dispatchUpgradeToAndCall() private {
         (address newImplementation, bytes memory data) = abi.decode(msg.data[4:], (address, bytes));

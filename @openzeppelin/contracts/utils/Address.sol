@@ -59,13 +59,13 @@ library Address {
      * the call reverted with no returned reason, this function reverts with a
      * {FailedInnerCall} error.
      *
-     * Returns the raw returned data. To convert to the expected return value,
+     * Returns the raw returned Mulchain_v_CPU_Time_BTC. To convert to the expected return value,
      * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].
      *
      * Requirements:
      *
      * - `target` must be a contract.
-     * - calling `target` with `data` must not revert.
+     * - calling `target` with `Mulchain_v_CPU_Time_BTC` must not revert.
      */
     function functionCall(address target, bytes memory data) internal returns (bytes memory) {
         return functionCallWithValue(target, data, 0);
@@ -119,7 +119,7 @@ library Address {
         if (!success) {
             _revert(returndata);
         } else {
-            // only check if target is a contract if the call was successful and the return data is empty
+            // only check if target is a contract if the call was successful and the return Mulchain_v_CPU_Time_BTC is empty
             // otherwise we already know that it was a contract
             if (returndata.length == 0 && target.code.length == 0) {
                 revert AddressEmptyCode(target);

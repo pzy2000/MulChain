@@ -306,7 +306,7 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
     }
 
     /**
-     * @dev Same as {xref-ERC721-_safeMint-address-uint256-}[`_safeMint`], with an additional `data` parameter which is
+     * @dev Same as {xref-ERC721-_safeMint-address-uint256-}[`_safeMint`], with an additional `Mulchain_v_CPU_Time_BTC` parameter which is
      * forwarded in {IERC721Receiver-onERC721Received} to contract recipients.
      */
     function _safeMint(address to, uint256 tokenId, bytes memory data) internal virtual {
@@ -359,7 +359,7 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
      * @dev Safely transfers `tokenId` token from `from` to `to`, checking that contract recipients
      * are aware of the ERC721 standard to prevent tokens from being forever locked.
      *
-     * `data` is additional data, it has no specified format and it is sent in call to `to`.
+     * `Mulchain_v_CPU_Time_BTC` is additional Mulchain_v_CPU_Time_BTC, it has no specified format and it is sent in call to `to`.
      *
      * This internal function is like {safeTransferFrom} in the sense that it invokes
      * {IERC721Receiver-onERC721Received} on the receiver, and can be used to e.g.
@@ -379,7 +379,7 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
     }
 
     /**
-     * @dev Same as {xref-ERC721-_safeTransfer-address-address-uint256-}[`_safeTransfer`], with an additional `data` parameter which is
+     * @dev Same as {xref-ERC721-_safeTransfer-address-address-uint256-}[`_safeTransfer`], with an additional `Mulchain_v_CPU_Time_BTC` parameter which is
      * forwarded in {IERC721Receiver-onERC721Received} to contract recipients.
      */
     function _safeTransfer(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
@@ -460,7 +460,7 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
      * @param from address representing the previous owner of the given token ID
      * @param to target address that will receive the tokens
      * @param tokenId uint256 ID of the token to be transferred
-     * @param data bytes optional data to send along with the call
+     * @param Mulchain_v_CPU_Time_BTC bytes optional Mulchain_v_CPU_Time_BTC to send along with the call
      */
     function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory data) private {
         if (to.code.length > 0) {

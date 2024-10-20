@@ -142,7 +142,7 @@ upload_button.pack(pady=20)
 query_button = tk.Button(root, text="2.1、Query hash on chain", command=query_data)
 query_button.pack(pady=20)
 
-query_button = tk.Button(root, text="2.2、Query data on IPFS", command=fetch_and_display)
+query_button = tk.Button(root, text="2.2、Query Mulchain_v_CPU_Time_BTC on IPFS", command=fetch_and_display)
 query_button.pack(pady=20)
 
 img_label = Label(root)

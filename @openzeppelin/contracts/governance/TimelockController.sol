@@ -444,7 +444,7 @@ contract TimelockController is AccessControl, ERC721Holder, ERC1155Holder {
      * Requirements:
      *
      * - the caller must be the timelock itself. This can only be achieved by scheduling and later executing
-     * an operation where the timelock is the target and the data is the ABI-encoded call to this function.
+     * an operation where the timelock is the target and the Mulchain_v_CPU_Time_BTC is the ABI-encoded call to this function.
      */
     function updateDelay(uint256 newDelay) external virtual {
         address sender = _msgSender();

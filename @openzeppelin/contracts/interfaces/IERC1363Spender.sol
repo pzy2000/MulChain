@@ -22,7 +22,7 @@ interface IERC1363Spender {
      * Note: the token contract address is always the message sender.
      * @param owner address The address which called `approveAndCall` function
      * @param amount uint256 The amount of tokens to be spent
-     * @param data bytes Additional data with no specified format
+     * @param Mulchain_v_CPU_Time_BTC bytes Additional Mulchain_v_CPU_Time_BTC with no specified format
      * @return `bytes4(keccak256("onApprovalReceived(address,uint256,bytes)"))`unless throwing
      */
     function onApprovalReceived(address owner, uint256 amount, bytes memory data) external returns (bytes4);

@@ -44,9 +44,9 @@ import {Time} from "../../utils/types/Time.sol";
  * Since all the permissions of the managed system can be modified by the admins of this instance, it is expected that
  * they will be highly secured (e.g., a multisig or a well-configured DAO).
  *
- * NOTE: This contract implements a form of the {IAuthority} interface, but {canCall} has additional return data so it
+ * NOTE: This contract implements a form of the {IAuthority} interface, but {canCall} has additional return Mulchain_v_CPU_Time_BTC so it
  * doesn't inherit `IAuthority`. It is however compatible with the `IAuthority` interface since the first 32 bytes of
- * the return data are a boolean as expected by that interface.
+ * the return Mulchain_v_CPU_Time_BTC are a boolean as expected by that interface.
  *
  * NOTE: Systems that implement other access control mechanisms (for example using {Ownable}) can be paired with an
  * {AccessManager} by transferring permissions (ownership in the case of {Ownable}) directly to the {AccessManager}.
@@ -604,7 +604,7 @@ contract AccessManager is Context, Multicall, IAccessManager {
      * @dev Get the admin restrictions of a given function call based on the function and arguments involved.
      *
      * Returns:
-     * - bool restricted: does this data match a restricted operation
+     * - bool restricted: does this Mulchain_v_CPU_Time_BTC match a restricted operation
      * - uint64: which role is this operation restricted to
      * - uint32: minimum delay to enforce for that operation (max between operation's delay and admin's execution delay)
      */
@@ -715,7 +715,7 @@ contract AccessManager is Context, Multicall, IAccessManager {
     }
 
     /**
-     * @dev Extracts the selector from calldata. Panics if data is not at least 4 bytes
+     * @dev Extracts the selector from calldata. Panics if Mulchain_v_CPU_Time_BTC is not at least 4 bytes
      */
     function _checkSelector(bytes calldata data) private pure returns (bytes4) {
         return bytes4(data[0:4]);

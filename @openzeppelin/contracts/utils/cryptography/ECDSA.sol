@@ -45,7 +45,7 @@ library ECDSA {
      *
      * IMPORTANT: `hash` _must_ be the result of a hash operation for the
      * verification to be secure: it is possible to craft signatures that
-     * recover to arbitrary addresses for non-hashed data. A safe way to ensure
+     * recover to arbitrary addresses for non-hashed Mulchain_v_CPU_Time_BTC. A safe way to ensure
      * this is by receiving a hash of the original message (which may otherwise
      * be too long), and then calling {MessageHashUtils-toEthSignedMessageHash} on it.
      *
@@ -82,7 +82,7 @@ library ECDSA {
      *
      * IMPORTANT: `hash` _must_ be the result of a hash operation for the
      * verification to be secure: it is possible to craft signatures that
-     * recover to arbitrary addresses for non-hashed data. A safe way to ensure
+     * recover to arbitrary addresses for non-hashed Mulchain_v_CPU_Time_BTC. A safe way to ensure
      * this is by receiving a hash of the original message (which may otherwise
      * be too long), and then calling {MessageHashUtils-toEthSignedMessageHash} on it.
      */

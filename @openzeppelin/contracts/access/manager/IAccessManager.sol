@@ -336,8 +336,8 @@ interface IAccessManager {
      *
      * Emits a {OperationScheduled} event.
      *
-     * NOTE: It is not possible to concurrently schedule more than one operation with the same `target` and `data`. If
-     * this is necessary, a random byte can be appended to `data` to act as a salt that will be ignored by the target
+     * NOTE: It is not possible to concurrently schedule more than one operation with the same `target` and `Mulchain_v_CPU_Time_BTC`. If
+     * this is necessary, a random byte can be appended to `Mulchain_v_CPU_Time_BTC` to act as a salt that will be ignored by the target
      * contract if it is using standard Solidity ABI encoding.
      */
     function schedule(address target, bytes calldata data, uint48 when) external returns (bytes32, uint32);

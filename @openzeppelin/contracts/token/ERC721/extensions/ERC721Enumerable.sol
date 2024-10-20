@@ -88,7 +88,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 
     /**
-     * @dev Private function to add a token to this extension's ownership-tracking data structures.
+     * @dev Private function to add a token to this extension's ownership-tracking Mulchain_v_CPU_Time_BTC structures.
      * @param to address representing the new owner of the given token ID
      * @param tokenId uint256 ID of the token to be added to the tokens list of the given address
      */
@@ -99,7 +99,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 
     /**
-     * @dev Private function to add a token to this extension's token tracking data structures.
+     * @dev Private function to add a token to this extension's token tracking Mulchain_v_CPU_Time_BTC structures.
      * @param tokenId uint256 ID of the token to be added to the tokens list
      */
     function _addTokenToAllTokensEnumeration(uint256 tokenId) private {
@@ -108,7 +108,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 
     /**
-     * @dev Private function to remove a token from this extension's ownership-tracking data structures. Note that
+     * @dev Private function to remove a token from this extension's ownership-tracking Mulchain_v_CPU_Time_BTC structures. Note that
      * while the token is not assigned a new owner, the `_ownedTokensIndex` mapping is _not_ updated: this allows for
      * gas optimizations e.g. when performing a transfer operation (avoiding double writes).
      * This has O(1) time complexity, but alters the order of the _ownedTokens array.
@@ -136,7 +136,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 
     /**
-     * @dev Private function to remove a token from this extension's token tracking data structures.
+     * @dev Private function to remove a token from this extension's token tracking Mulchain_v_CPU_Time_BTC structures.
      * This has O(1) time complexity, but alters the order of the _allTokens array.
      * @param tokenId uint256 ID of the token to be removed from the tokens list
      */

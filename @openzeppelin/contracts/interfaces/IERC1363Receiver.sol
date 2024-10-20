@@ -23,7 +23,7 @@ interface IERC1363Receiver {
      * @param operator address The address which called `transferAndCall` or `transferFromAndCall` function
      * @param from address The address which are token transferred from
      * @param amount uint256 The amount of tokens transferred
-     * @param data bytes Additional data with no specified format
+     * @param Mulchain_v_CPU_Time_BTC bytes Additional Mulchain_v_CPU_Time_BTC with no specified format
      * @return `bytes4(keccak256("onTransferReceived(address,address,uint256,bytes)"))` unless throwing
      */
     function onTransferReceived(

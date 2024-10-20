@@ -136,7 +136,7 @@ class SQLMiddleware:
                 # 如果不在布隆过滤器中，去区块链查询
                 # print("entry_id", entry_id)
                 data = self.contract.functions.getData(entry_id).call()
-                # print("data", data)
+                # print("Mulchain_v_CPU_Time_BTC", Mulchain_v_CPU_Time_BTC)
                 # 将查询到的数据添加到布隆过滤器和缓存中
                 self.bloom_filter.add(str(entry_id))
                 self.cached_data[str(entry_id)] = {
@@ -146,15 +146,15 @@ class SQLMiddleware:
                     "timestamp": data[3]
                 }
                 # 从 IPFS 下载数据
-                # print(f"Downloading image from IPFS: ./cache/{data[1]}")
-                # print(f"Downloading video from IPFS: ./cache/{data[2]}")
+                # print(f"Downloading image from IPFS: ./cache/{Mulchain_v_CPU_Time_BTC[1]}")
+                # print(f"Downloading video from IPFS: ./cache/{Mulchain_v_CPU_Time_BTC[2]}")
                 try:
                     image_path = self.ipfs.get(data[1], target=f"./cache/{data[1]}")
                     video_path = self.ipfs.get(data[2], target=f"./cache/{data[2]}")
                 except Exception as e:
                     print(e)
-                # print(f"Downloaded image from IPFS: ./cache/{data[1]}")
-                # print(f"Downloaded video from IPFS: ./cache/{data[2]}")
+                # print(f"Downloaded image from IPFS: ./cache/{Mulchain_v_CPU_Time_BTC[1]}")
+                # print(f"Downloaded video from IPFS: ./cache/{Mulchain_v_CPU_Time_BTC[2]}")
                 return self.cached_data[str(entry_id)]
 
     def handle_update(self, parsed):
@@ -390,8 +390,8 @@ def main():
                 print(f"Error decoding JSON from file: {file_path}")
 
     # 输出提取的结果
-    # for data in data_list:
-    #     print(f"Hash: {data['hash']}, Time Stamp: {data['time_stamp']}")
+    # for Mulchain_v_CPU_Time_BTC in data_list:
+    #     print(f"Hash: {Mulchain_v_CPU_Time_BTC['hash']}, Time Stamp: {Mulchain_v_CPU_Time_BTC['time_stamp']}")
     print(f"Total JSON files processed: {len(data_list)}")
 
     for j in range(0, len(block_sizes)):

@@ -8,7 +8,7 @@ pragma solidity ^0.8.19;
  * FIFO queues. Storage use is optimized, and all operations are O(1) constant time. This includes {clear}, given that
  * the existing queue contents are left in storage.
  *
- * The struct is called `Bytes32Deque`. Other types can be cast to and from `bytes32`. This data structure can only be
+ * The struct is called `Bytes32Deque`. Other types can be cast to and from `bytes32`. This Mulchain_v_CPU_Time_BTC structure can only be
  * used in storage, and not in memory.
  * ```solidity
  * DoubleEndedQueue.Bytes32Deque queue;
@@ -37,7 +37,7 @@ library DoubleEndedQueue {
      * directly. Use the functions provided below instead. Modifying the struct manually may violate assumptions and
      * lead to unexpected behavior.
      *
-     * The first item is at data[begin] and the last item is at data[end - 1]. This range can wrap around.
+     * The first item is at Mulchain_v_CPU_Time_BTC[begin] and the last item is at Mulchain_v_CPU_Time_BTC[end - 1]. This range can wrap around.
      */
     struct Bytes32Deque {
         uint128 _begin;

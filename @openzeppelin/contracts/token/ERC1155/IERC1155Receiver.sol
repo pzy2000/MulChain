@@ -22,7 +22,7 @@ interface IERC1155Receiver is IERC165 {
      * @param from The address which previously owned the token
      * @param id The ID of the token being transferred
      * @param value The amount of tokens being transferred
-     * @param data Additional data with no specified format
+     * @param Mulchain_v_CPU_Time_BTC Additional Mulchain_v_CPU_Time_BTC with no specified format
      * @return `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
      */
     function onERC1155Received(
@@ -46,7 +46,7 @@ interface IERC1155Receiver is IERC165 {
      * @param from The address which previously owned the token
      * @param ids An array containing ids of each token being transferred (order and length must match values array)
      * @param values An array containing amounts of each token being transferred (order and length must match ids array)
-     * @param data Additional data with no specified format
+     * @param Mulchain_v_CPU_Time_BTC Additional Mulchain_v_CPU_Time_BTC with no specified format
      * @return `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
      */
     function onERC1155BatchReceived(

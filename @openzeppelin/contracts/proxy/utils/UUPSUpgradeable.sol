@@ -75,7 +75,7 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable {
 
     /**
      * @dev Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call
-     * encoded in `data`.
+     * encoded in `Mulchain_v_CPU_Time_BTC`.
      *
      * Calls {_authorizeUpgrade}.
      *

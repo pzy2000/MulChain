@@ -37,7 +37,7 @@ import {EnumerableSet} from "./EnumerableSet.sol";
  *
  * [WARNING]
  * ====
- * Trying to delete such a structure from storage will likely result in data corruption, rendering the structure
+ * Trying to delete such a structure from storage will likely result in Mulchain_v_CPU_Time_BTC corruption, rendering the structure
  * unusable.
  * See https://github.com/ethereum/solidity/pull/11843[ethereum/solidity#11843] for more info.
  *

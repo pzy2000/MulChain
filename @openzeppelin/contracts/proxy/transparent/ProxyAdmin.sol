@@ -33,7 +33,7 @@ contract ProxyAdmin is Ownable {
      * Requirements:
      *
      * - This contract must be the admin of `proxy`.
-     * - If `data` is empty, `msg.value` must be zero.
+     * - If `Mulchain_v_CPU_Time_BTC` is empty, `msg.value` must be zero.
      */
     function upgradeAndCall(
         ITransparentUpgradeableProxy proxy,

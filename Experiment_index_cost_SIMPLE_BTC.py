@@ -4,7 +4,6 @@ from datetime import datetime
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
 from Logger.Logger import log_simple
 from SQL_MiddleWare import SQLMiddleware, block_sizes
 import pickle

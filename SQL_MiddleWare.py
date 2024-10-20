@@ -62,11 +62,11 @@ class SQLMiddleware:
 
         # 初始化用于统计索引构建和区块生成的开销数据
         self.index_building_times = []
-        self.on_chain_index_building_times = []
+        self.MulChain_o_index_building_times = []
         self.block_generation_times = []
         self.index_storage_costs = []
         self.select_latency = []
-        self.select_on_chain_latency = []
+        self.select_MulChain_o_latency = []
         self.select_adder_latency = []
         self.select_BHash_latency = []
         self.select_Trie_latency = []
@@ -131,7 +131,7 @@ class SQLMiddleware:
             # 记录索引构建和区块生成开销
             index_end_time = time.time()
             self.index_building_times.append(index_end_time - index_start_time)
-            self.on_chain_index_building_times.append(index_end_time - index_off_start_time)
+            self.MulChain_o_index_building_times.append(index_end_time - index_off_start_time)
             self.block_generation_times.append(block_end_time - block_start_time)
 
             # 计算索引存储成本
@@ -168,7 +168,7 @@ class SQLMiddleware:
                 #     results.append(self.cached_data[(start_time, end_time)])
                 if results:
                     on_chain_select_end_time = time.time()
-                    self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time)
                     return results
@@ -202,7 +202,7 @@ class SQLMiddleware:
                             "timestamp": data_btree[3]
                         })
                     on_chain_select_end_time = time.time()
-                    self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time - wasted_time)
                     wasted_time = 0
@@ -276,7 +276,7 @@ class SQLMiddleware:
                             "timestamp": data[3]
                         })
                 on_chain_select_end_time = time.time()
-                self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                 select_end_time = time.time()
                 self.select_adder_latency.append(select_end_time - select_start_time - wasted_time)
                 select_start_time_trie = time.time()
@@ -298,19 +298,19 @@ class SQLMiddleware:
                 entry_id = int(condition.split('=')[1].strip())
                 # 使用布隆过滤器加速查询
                 if str(entry_id) in self.bloom_filter:
-                    # print("enter bloom")
+                    print("enter bloom")
                     # 如果在布隆过滤器中，返回缓存的数据
                     cached_data = self.cached_data.get(str(entry_id), None)
                     # print("cache_data", cached_data)
                     if cached_data:
                         on_chain_select_end_time = time.time()
-                        self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                        self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                         select_end_time = time.time()
                         self.select_latency.append(select_end_time - select_start_time)
                         return cached_data
                     else:
                         on_chain_select_end_time = time.time()
-                        self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                        self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                         select_end_time = time.time()
                         self.select_latency.append(select_end_time - select_start_time)
                         return "Data not found in cached storage."
@@ -326,7 +326,7 @@ class SQLMiddleware:
                         "timestamp": data[3]
                     }
                     on_chain_select_end_time = time.time()
-                    self.select_on_chain_latency.append(on_chain_select_end_time - select_start_time)
+                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                     try:
                         image_path = self.ipfs.get(data[1], target=f"./cache/{data[1]}")
                         video_path = self.ipfs.get(data[2], target=f"./cache/{data[2]}")
@@ -334,6 +334,9 @@ class SQLMiddleware:
                         print(e)
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time)
+                    gas_a = self.contract.functions.getData(entry_id).estimate_gas(
+                        {'from': w3.eth.default_account})
+                    self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                     return self.cached_data[str(entry_id)]
 
     def extract_prefix_condition(self, condition):

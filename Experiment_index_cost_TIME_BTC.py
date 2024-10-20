@@ -2,14 +2,12 @@ import hashlib
 import json
 import pickle
 from datetime import datetime
-
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
 from Logger.Logger import log_time_range
-from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times
-
+from SQL_MiddleWare import SQLMiddleware, generate_random_times
+block_sizes = [8, 16, 32, 64, 128, 256, 512]
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()

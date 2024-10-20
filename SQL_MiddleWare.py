@@ -29,8 +29,8 @@ block_sizes = [16, 32, 64, 128, 256, 512, 1024]
 
 def generate_random_times(min_time, max_time):
     # 生成两个随机的时间差
-    min_time = datetime.strptime(min_time, '%Y-%m-%d')
-    max_time = datetime.strptime(max_time, '%Y-%m-%d')
+    min_time = datetime.strptime(min_time, '%Y-%m-%d %H:%M:%S')
+    max_time = datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
     delta_a = random.randint(0, int((max_time - min_time).total_seconds()))
     delta_b = random.randint(delta_a, int((max_time - min_time).total_seconds()))
 

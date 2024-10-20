@@ -222,9 +222,9 @@ def log_simple(sql_middleware, fw, block_size):
     fw.write("\n")
 
     print(
-        f"MulChain_v_vo_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb / len(sql_middleware.vo_adder_size_kb)) :.4f} KB")
+        f"MulChain_v_vo_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) / len(sql_middleware.vo_adder_size_kb) :.4f} KB")
     fw.write(
-        f"MulChain_v_vo_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb / len(sql_middleware.vo_adder_size_kb)) :.4f} KB")
+        f"MulChain_v_vo_size for {block_size} blocks: {sum(sql_middleware.vo_adder_size_kb) / len(sql_middleware.vo_adder_size_kb) :.4f} KB")
     fw.write("\n")
 
     print(

@@ -7,7 +7,7 @@ from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 
 from Logger.Logger import log_time_range
-from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times_BTC
+from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times_BTC, generate_random_times
 from global_w3 import gas_per_kb
 
 
@@ -99,7 +99,7 @@ def main():
             print(f"----- Starting select query for {block_size} blocks -----")
             for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 # 构建 SELECT 查询并调用 parse_query
-                a, b = generate_random_times_BTC(min_time, max_time)
+                a, b = generate_random_times(min_time, max_time)
                 select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
                 sql_middleware.parse_query(select_query)
             log_time_range(sql_middleware, fw, block_size)

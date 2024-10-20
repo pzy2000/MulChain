@@ -2,13 +2,13 @@ import hashlib
 import json
 import pickle
 from datetime import datetime
+
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 
 from Logger.Logger import log_time_range
 from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times
-from global_w3 import gas_per_kb
 
 
 def generate_text_hash(text):
@@ -69,8 +69,8 @@ def main():
         # 解析日期字符串为 datetime 对象
         dt_object = datetime.strptime(data['time_stamp'], '%Y-%m-%d %H:%M:%S')
         # 将 datetime 对象转换为日期字符串
-        formatted_date = dt_object.strftime('%Y-%m-%d')
-        data['time_stamp'] = formatted_date
+        formatted_date = dt_object.strftime('%Y-%m-%d %H:%M:%S')
+        # data['time_stamp'] = formatted_date
         time_stamp_list.append(formatted_date)
 
     min_time = min(time_stamp_list)

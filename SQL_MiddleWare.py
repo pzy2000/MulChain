@@ -41,16 +41,12 @@ def generate_random_times_ETH(min_time, max_time):
     return a, a
 
 
-
-
-
 # 生成 min_time 到 max_time 之间的随机时间
 def generate_random_date(min_time, max_time):
     delta = max_time - min_time
     random_seconds = random.randint(0, int(delta.total_seconds()))
     random_date = min_time + timedelta(seconds=random_seconds)
     return random_date.strftime('%Y-%m-%d')
-
 
 
 class SQLMiddleware:
@@ -230,17 +226,17 @@ class SQLMiddleware:
                     #             "timestamp": data_adder[3]
                     #         })
 
-                            # results.append(self.cached_data[str(entry_id)])
+                    # results.append(self.cached_data[str(entry_id)])
                     data_adder = self.contract.functions.getDataByTimeAdder(start_time, end_time).call()
                     wasted_time_s = time.time()
                     gas_a = self.contract.functions.getDataByTimeAdder(start_time, end_time).estimate_gas(
-                                {'from': w3.eth.default_account})
+                        {'from': w3.eth.default_account})
                     results1.append({
-                                    "text_hash": data_adder[0],
-                                    "image_cid": data_adder[1],
-                                    "video_cid": data_adder[2],
-                                    "timestamp": data_adder[3]
-                                })
+                        "text_hash": data_adder[0],
+                        "image_cid": data_adder[1],
+                        "video_cid": data_adder[2],
+                        "timestamp": data_adder[3]
+                    })
                     self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                     wasted_time_e = time.time()
                     wasted_time += wasted_time_e - wasted_time_s
@@ -289,10 +285,10 @@ class SQLMiddleware:
                 select_end_time_trie = time.time()
                 self.select_Trie_latency.append(select_end_time_trie - select_start_time_trie)
                 results_trie = data_trie
-                if results != results_trie and (len(results) != 0 and results_trie[0]):
+                if results != results_trie and (len(results) != len(results_trie[0])):
                     print("results mismatch")
-                    print("results: ", results)
-                    print("results_trie: ", results_trie)
+                    print("results: ", len(results))
+                    print("results_trie: ", len(results_trie[0]))
                 gas_t = self.contract.functions.getDataByFuzzy(prefix).estimate_gas(
                     {'from': w3.eth.default_account})
                 self.vo_trie_size_kb.append(gas_t / gas_per_kb)

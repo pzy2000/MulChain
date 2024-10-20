@@ -189,12 +189,6 @@ class SQLMiddleware:
                     # print(f"VO Size: {gas_b / gas_per_kb:.4f} KB")
                     wasted_time_on = 0
                     if data_btree[3]:
-                        # self.cached_data[(start_time, end_time)] = {
-                        #     "text_hash": data_btree[0],
-                        #     "image_cid": data_btree[1],
-                        #     "video_cid": data_btree[2],
-                        #     "timestamp": data_btree[3]
-                        # }
                         results.append({
                             "text_hash": data_btree[0],
                             "image_cid": data_btree[1],
@@ -209,32 +203,11 @@ class SQLMiddleware:
                             print(e)
                         wasted_time_on_e = time.time()
                         wasted_time_on += wasted_time_on_e - wasted_time_on_s
-                    on_chain_select_end_time = time.time()
-                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
+
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time - wasted_time - wasted_time_on)
                     wasted_time = 0
-                    # prev_gas_a = None
-                    # for entry_id in range(self.contract.functions.entryCount().call()):
-                    #
-                    #     data_adder = self.contract.functions.getData(entry_id).call()
-                    #     wasted_time_s = time.time()
-                    #
-                    #     gas_a = self.contract.functions.getData(entry_id).estimate_gas(
-                    #         {'from': w3.eth.default_account}) if entry_id == 0 else prev_gas_a
-                    #     prev_gas_a = gas_a if entry_id == 0 else prev_gas_a
-                    #     wasted_time_e = time.time()
-                    #     wasted_time += wasted_time_e - wasted_time_s
-                    #     self.vo_adder_size_kb.append(gas_a / gas_per_kb)
-                    #     if start_time <= data_adder[3] <= end_time:
-                    #         results1.append({
-                    #             "text_hash": data_adder[0],
-                    #             "image_cid": data_adder[1],
-                    #             "video_cid": data_adder[2],
-                    #             "timestamp": data_adder[3]
-                    #         })
 
-                    # results.append(self.cached_data[str(entry_id)])
                     data_adder = self.contract.functions.getDataByTimeAdder(start_time, end_time).call()
                     wasted_time_s = time.time()
                     gas_a = self.contract.functions.getDataByTimeAdder(start_time, end_time).estimate_gas(
@@ -250,10 +223,12 @@ class SQLMiddleware:
                     wasted_time += wasted_time_e - wasted_time_s
                     self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                     select_adder_end_time = time.time()
-                    self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time)
+                    self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time+ wasted_time_on)
                     data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
                     select_bhash_end_time = time.time()
-                    self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time)
+                    self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time + wasted_time_on)
+                    on_chain_select_end_time = time.time()
+                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                     gas_bh = self.contract.functions.getDataByTime_BHash(start_time, end_time).estimate_gas(
                         {'from': w3.eth.default_account})
                     self.vo_bhashtree_size_kb.append(gas_bh / gas_per_kb)

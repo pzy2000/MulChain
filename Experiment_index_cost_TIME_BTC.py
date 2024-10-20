@@ -7,7 +7,7 @@ from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 
 from Logger.Logger import log_time_range
-from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times_BTC, generate_random_times
+from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_times
 from global_w3 import gas_per_kb
 
 

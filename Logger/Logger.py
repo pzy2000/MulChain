@@ -11,8 +11,8 @@ def log_time_range(sql_middleware, fw, block_size):
     avg_MulChain_o_select_latency = sum(sql_middleware.select_MulChain_o_latency) / len(
         sql_middleware.select_MulChain_o_latency)
     avg_MulChain_BT_select_latency = sum(sql_middleware.select_latency) / len(sql_middleware.select_latency)
-    avg_MulChain_BH_select_latency = sum(sql_middleware.select_MulChain_o_latency) / len(
-        sql_middleware.select_MulChain_o_latency)
+    avg_MulChain_BH_select_latency = sum(sql_middleware.select_BHash_latency) / len(
+        sql_middleware.select_BHash_latency)
 
     print(f"MulChain_v Insert time for {block_size} blocks: {avg_MulChain_v_index_build_time:.4f} seconds")
     fw.write(

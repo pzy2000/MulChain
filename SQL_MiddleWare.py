@@ -228,7 +228,7 @@ class SQLMiddleware:
                     select_bhash_end_time = time.time()
                     self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time + wasted_time_on)
                     on_chain_select_end_time = time.time()
-                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
+                    self.select_MulChain_o_latency.append(on_chain_select_end_time - select_adder_end_time)
                     gas_bh = self.contract.functions.getDataByTime_BHash(start_time, end_time).estimate_gas(
                         {'from': w3.eth.default_account})
                     self.vo_bhashtree_size_kb.append(gas_bh / gas_per_kb)

@@ -102,7 +102,6 @@ def main():
                 a, b = generate_random_times_BTC(min_time, max_time)
                 select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
                 sql_middleware.parse_query(select_query)
-
             log_time_range(sql_middleware, fw, block_size)
 
 

@@ -187,7 +187,7 @@ class SQLMiddleware:
 
                     self.vo_btree_size_kb.append(gas_b / gas_per_kb)
                     # print(f"VO Size: {gas_b / gas_per_kb:.4f} KB")
-
+                    wasted_time_on = 0
                     if data_btree[3]:
                         # self.cached_data[(start_time, end_time)] = {
                         #     "text_hash": data_btree[0],
@@ -201,10 +201,18 @@ class SQLMiddleware:
                             "video_cid": data_btree[2],
                             "timestamp": data_btree[3]
                         })
+                        wasted_time_on_s = time.time()
+                        try:
+                            image_path = self.ipfs.get(data_btree[1], target=f"./cache/{data_btree[1]}")
+                            video_path = self.ipfs.get(data_btree[2], target=f"./cache/{data_btree[2]}")
+                        except Exception as e:
+                            print(e)
+                        wasted_time_on_e = time.time()
+                        wasted_time_on += wasted_time_on_e - wasted_time_on_s
                     on_chain_select_end_time = time.time()
                     self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
                     select_end_time = time.time()
-                    self.select_latency.append(select_end_time - select_start_time - wasted_time)
+                    self.select_latency.append(select_end_time - select_start_time - wasted_time - wasted_time_on)
                     wasted_time = 0
                     # prev_gas_a = None
                     # for entry_id in range(self.contract.functions.entryCount().call()):

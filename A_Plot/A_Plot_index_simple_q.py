@@ -117,7 +117,7 @@ axs[2].grid(axis='y', linestyle='--', linewidth=0.7)
 plt.tight_layout()
 
 # 保存图表
-plt.savefig('../Figures/SimpleQ_all.png', dpi=360)
+plt.savefig('../Figures/SimpleQ_all.pdf', dpi=360)
 
 # 显示图表
 plt.show()

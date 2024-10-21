@@ -7,7 +7,9 @@ from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 from Logger.Logger import log_time_range
 from SQL_MiddleWare import SQLMiddleware, generate_random_times
+
 block_sizes = [8, 16, 32, 64, 128, 256, 512]
+
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
@@ -80,7 +82,6 @@ def main():
     print(f"Loaded {len(data_list)} items from data_list.pkl")
     with open("AAA_TIME_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):
-            # entry_id = 0
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")

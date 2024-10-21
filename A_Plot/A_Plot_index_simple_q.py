@@ -67,7 +67,7 @@ axs[2].plot(x, Mulchain_v_VO_ETH, marker='D', linestyle='-', color='#6BB7CA', la
 axs[2].set_xlabel('Number (Blocks)\n(c) VO Size', fontsize=20)
 axs[2].set_ylabel('VO Size (KB)', fontsize=20)
 axs[2].set_xscale('log', base=2)  # 设置x轴为对数制度，底数为2
-# axs[2].set_yscale('log')  # 设置y轴为对数尺度
+axs[2].set_yscale('log')  # 设置y轴为对数尺度
 axs[2].set_xticks(x)  # 设置X轴制点
 axs[2].set_xticklabels(x, fontsize=20)
 

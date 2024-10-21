@@ -100,6 +100,7 @@ def main():
                 random_date = generate_random_date(min_time, max_time)
                 random_date += '%'
                 select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '{random_date}'"
+                print("select_query: ", select_query)
                 result = sql_middleware.parse_query(select_query)
                 # if result:
                 #     pprint(result)

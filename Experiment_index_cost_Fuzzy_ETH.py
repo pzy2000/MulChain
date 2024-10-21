@@ -1,7 +1,6 @@
 import hashlib
 import json
 from datetime import datetime
-from pprint import pprint
 
 import ipfshttpclient
 import pandas as pd
@@ -96,6 +95,7 @@ def main():
                 image_path = "sample_image.jpg"  # 请替换为实际图片路径
                 video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
+                # print("insert_query: ", insert_query)
                 sql_middleware.parse_query(insert_query)
                 # 构建 SELECT 查询并调用 parse_query
 
@@ -107,8 +107,9 @@ def main():
                 random_date += '%'
                 select_query = f"SELECT * FROM multimodal_data WHERE time_stamp LIKE '{random_date}'"
                 result = sql_middleware.parse_query(select_query)
+                # print("select_query: ", select_query)
                 # if result:
-                #     pprint(result)
+                #     print(result)
                 # sql_middleware.parse_query(select_query)
             log_fuzzy(sql_middleware, fw, block_size)
 

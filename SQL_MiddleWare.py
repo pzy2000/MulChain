@@ -123,6 +123,7 @@ class SQLMiddleware:
 
             # 调用区块链合约的 storeData 方法并记录区块生成时间
             block_start_time = time.time()
+            # print("timestamp:", timestamp)
             tx_hash = self.contract.functions.storeData(text_hash, image_cid, video_cid, timestamp).transact()
             # 手动生成新区块
             block_end_time = time.time()
@@ -223,7 +224,8 @@ class SQLMiddleware:
                     wasted_time += wasted_time_e - wasted_time_s
                     self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                     select_adder_end_time = time.time()
-                    self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time + wasted_time_on)
+                    self.select_adder_latency.append(
+                        select_adder_end_time - select_end_time - wasted_time + wasted_time_on)
                     data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
                     select_bhash_end_time = time.time()
                     self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time + wasted_time_on)
@@ -262,16 +264,23 @@ class SQLMiddleware:
                 select_end_time = time.time()
 
                 select_start_time_trie = time.time()
-
+                # print("prefix: ", prefix)
+                # f = open("prefix.txt", "w")
+                # f.write(prefix)
+                # f.close()
                 data_trie = self.contract.functions.getDataByFuzzy(prefix).call()
+                # print("data_trie")
+                # print(data_trie)
                 on_chain_select_end_time = time.time()
                 self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time_trie)
                 on_chain_time_s = time.time()
-                try:
-                    image_path = self.ipfs.get(data_trie[1], target=f"./cache/{data_trie[1]}")
-                    video_path = self.ipfs.get(data_trie[2], target=f"./cache/{data_trie[2]}")
-                except Exception as e:
-                    print(e)
+                if results:
+                    try:
+                        image_path = self.ipfs.get(results[0]['image_cid'], target=f"./cache/{results[0]['image_cid']}")
+                        video_path = self.ipfs.get(results[0]['video_cid'], target=f"./cache/{results[0]['video_cid']}")
+                    except Exception as e:
+                        print(e)
+
                 on_chain_time_e = time.time()
                 on_chain_time_used = on_chain_time_e - on_chain_time_s
                 select_end_time_trie = time.time()

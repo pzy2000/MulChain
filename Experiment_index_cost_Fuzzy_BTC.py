@@ -67,15 +67,12 @@ def main():
 
     time_stamp_list = []
     for data in data_list:
-        # 解析日期字符串为 datetime 对象
-        dt_object = datetime.strptime(data['time_stamp'], '%Y-%m-%d %H:%M:%S')
-        # 将 datetime 对象转换为日期字符串
-        formatted_date = dt_object.strftime('%Y-%m-%d')
-        data['time_stamp'] = formatted_date
-        time_stamp_list.append(formatted_date)
+        time_stamp_list.append(data['time_stamp'])
 
     min_time = min(time_stamp_list)
     max_time = max(time_stamp_list)
+    min_time = datetime.strptime(min_time, '%Y-%m-%d %H:%M:%S')
+    max_time = datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
     print("min_time:", min_time)
     print("max_time:", max_time)
     # 验证是否成功读取

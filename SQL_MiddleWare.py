@@ -223,7 +223,7 @@ class SQLMiddleware:
                     wasted_time += wasted_time_e - wasted_time_s
                     self.vo_adder_size_kb.append(gas_a / gas_per_kb)
                     select_adder_end_time = time.time()
-                    self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time+ wasted_time_on)
+                    self.select_adder_latency.append(select_adder_end_time - select_end_time - wasted_time + wasted_time_on)
                     data_bhash = self.contract.functions.getDataByTime_BHash(start_time, end_time).call()
                     select_bhash_end_time = time.time()
                     self.select_BHash_latency.append(select_bhash_end_time - select_adder_end_time + wasted_time_on)
@@ -258,15 +258,25 @@ class SQLMiddleware:
                             "video_cid": data[2],
                             "timestamp": data[3]
                         })
-                on_chain_select_end_time = time.time()
-                self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time)
+
                 select_end_time = time.time()
-                self.select_adder_latency.append(select_end_time - select_start_time - wasted_time)
+
                 select_start_time_trie = time.time()
 
                 data_trie = self.contract.functions.getDataByFuzzy(prefix).call()
+                on_chain_select_end_time = time.time()
+                self.select_MulChain_o_latency.append(on_chain_select_end_time - select_start_time_trie)
+                on_chain_time_s = time.time()
+                try:
+                    image_path = self.ipfs.get(data_trie[1], target=f"./cache/{data_trie[1]}")
+                    video_path = self.ipfs.get(data_trie[2], target=f"./cache/{data_trie[2]}")
+                except Exception as e:
+                    print(e)
+                on_chain_time_e = time.time()
+                on_chain_time_used = on_chain_time_e - on_chain_time_s
                 select_end_time_trie = time.time()
                 self.select_Trie_latency.append(select_end_time_trie - select_start_time_trie)
+                self.select_adder_latency.append(select_end_time - select_start_time - wasted_time + on_chain_time_used)
                 results_trie = data_trie
                 if results != results_trie and (len(results) != len(results_trie[0])):
                     print("results mismatch")

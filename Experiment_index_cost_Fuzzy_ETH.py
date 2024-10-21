@@ -81,7 +81,7 @@ def main():
     print("max_time:", max_time)
     # 验证是否成功读取
     print(f"Loaded {len(data_list)} items from data_list.csv")
-    with open("AAA_Fuzzy_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+    with open("AAA_Fuzzy_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
 
         for j in range(0, len(block_sizes)):
             # entry_id = 0

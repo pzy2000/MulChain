@@ -99,10 +99,16 @@ def log_time_range(sql_middleware, fw, block_size):
 
 def log_fuzzy(sql_middleware, fw, block_size):
     # 输出统计数据
-    avg_index_build_time = sum(sql_middleware.index_building_times) / len(sql_middleware.index_building_times)
-    avg_block_generation_time = sum(sql_middleware.block_generation_times) / len(
-        sql_middleware.block_generation_times)
-    avg_index_storage_cost = sum(sql_middleware.index_storage_costs) / len(sql_middleware.index_storage_costs)
+    avg_MulChain_v_index_build_time = sum(sql_middleware.index_building_times) / len(
+        sql_middleware.index_building_times)
+    avg_MulChain_o_index_build_time = (sum(sql_middleware.MulChain_o_index_building_times) /
+                                       len(sql_middleware.MulChain_o_index_building_times))
+    avg_MulChain_v_select_latency = sum(sql_middleware.select_adder_latency) / len(sql_middleware.select_adder_latency)
+    avg_MulChain_o_select_latency = sum(sql_middleware.select_MulChain_o_latency) / len(
+        sql_middleware.select_MulChain_o_latency)
+    avg_MulChain_BT_select_latency = sum(sql_middleware.select_latency) / len(sql_middleware.select_latency)
+    avg_MulChain_BH_select_latency = sum(sql_middleware.select_BHash_latency) / len(
+        sql_middleware.select_BHash_latency)
 
     print(f"Index build time for {block_size} blocks: {sum(sql_middleware.index_building_times):.4f} seconds")
     fw.write(
@@ -169,22 +175,10 @@ def log_fuzzy(sql_middleware, fw, block_size):
         f"MulChain_o Select latency for {block_size} blocks: {sum(sql_middleware.select_MulChain_o_latency) / len(sql_middleware.select_MulChain_o_latency):.4f} seconds")
     fw.write("\n")
 
-    print(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
-    fw.write(f"avg Index build time for {block_size} blocks: {avg_index_build_time:.4f} seconds")
-    fw.write("\n")
-
     print(
         f"avg MulChain_o Index build time for {block_size} blocks: {sum(sql_middleware.MulChain_o_index_building_times) / len(sql_middleware.MulChain_o_index_building_times):.4f} seconds")
     fw.write(
         f"avg MulChain_o Index build time for {block_size} blocks: {sum(sql_middleware.MulChain_o_index_building_times) / len(sql_middleware.MulChain_o_index_building_times):.4f} seconds")
-    fw.write("\n")
-
-    print(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
-    fw.write(f"avg Block generation time for {block_size} blocks: {avg_block_generation_time:.6f} seconds")
-    fw.write("\n")
-
-    print(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
-    fw.write(f"avg Index storage cost for {block_size} blocks: {avg_index_storage_cost / 1024:.8f} MB")
     fw.write("\n")
 
 

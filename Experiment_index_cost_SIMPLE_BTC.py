@@ -63,11 +63,11 @@ def main():
     time_stamp_list = []
     for data in data_list:
         # 解析日期字符串为 datetime 对象
-        dt_object = datetime.strptime(data['time_stamp'], '%Y-%m-%d %H:%M:%S')
+        # dt_object = datetime.strptime(data['time_stamp'], '%Y-%m-%d %H:%M:%S')
         # 将 datetime 对象转换为日期字符串
-        formatted_date = dt_object.strftime('%Y-%m-%d')
-        data['time_stamp'] = formatted_date
-        time_stamp_list.append(formatted_date)
+        # formatted_date = dt_object.strftime('%Y-%m-%d')
+        # data['time_stamp'] = formatted_date
+        time_stamp_list.append(data['time_stamp'])
 
     min_time = min(time_stamp_list)
     max_time = max(time_stamp_list)
@@ -89,6 +89,7 @@ def main():
                 image_path = "sample_image.jpg"  # 请替换为实际图片路径
                 video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
+                print("text_hash", text_hash)
                 sql_middleware.parse_query(insert_query)
 
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):

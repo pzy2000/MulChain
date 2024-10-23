@@ -173,7 +173,7 @@ contract MultiModalStorageManager {
         // 标记为数据条目结束节点
         currentNode.isEnd = true;
         currentNode.entryId = entryId;
-}
+    }
 
 
     // 模糊查询接口
@@ -384,7 +384,7 @@ contract MultiModalStorageManager {
             count = collectEntries(childNode, resultEntryIds, count);
         }
         return count;
-}
+    }
 
     // 辅助函数：检查字符是否有效
     function isValidChar(string memory char) internal view returns (bool) {

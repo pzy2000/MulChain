@@ -107,14 +107,14 @@ class SQLMiddleware:
 
             # 将图片和视频上传到 IPFS
             try:
-                if image_path not in self.ipfs_cache or video_path not in self.ipfs_cache:
-                    image_cid = self.ipfs.add(image_path)['Hash']
-                    video_cid = self.ipfs.add(video_path)['Hash']
-                    self.ipfs_cache[image_path] = image_cid
-                    self.ipfs_cache[video_path] = video_cid
-                else:
-                    image_cid = self.ipfs_cache.get(image_path)
-                    video_cid = self.ipfs_cache.get(video_path)
+                # if image_path not in self.ipfs_cache or video_path not in self.ipfs_cache:
+                image_cid = self.ipfs.add(image_path)['Hash']
+                video_cid = self.ipfs.add(video_path)['Hash']
+                self.ipfs_cache[image_path] = image_cid
+                self.ipfs_cache[video_path] = video_cid
+                # else:
+                #     image_cid = self.ipfs_cache.get(image_path)
+                #     video_cid = self.ipfs_cache.get(video_path)
             except Exception as e:
                 print(e)
                 image_cid = "0"

@@ -73,7 +73,7 @@ axs[1].plot(x, Mulchain_bh_latency_ETH, marker='X', linestyle='-', color='#DBE0E
 
 axs[1].set_xlabel('Number (Blocks)\n(b) Latency', )
 axs[1].set_ylabel('Latency (s)', )
-axs[1].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
+# axs[1].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[1].set_yscale('log')  # 设置y轴为对数尺度
 axs[1].set_yticks([10 ** -2, 10 ** -1.5, 10 ** -1, 10 ** 0],
                   ['$10^{-2}$', '$10^{-1.5}$', '$10^{-1}$', '$10^{0}$'])

@@ -57,7 +57,7 @@ class SQLMiddleware:
         self.bloom_filter = BloomFilter(capacity=45000, error_rate=0.001)
         # 存储提前缓存的数据
         self.cached_data = {}
-        self.ipfs_cache = {}
+        # self.ipfs_cache = {}
         self.cached_path = {}
 
         # 初始化用于统计索引构建和区块生成的开销数据
@@ -110,8 +110,8 @@ class SQLMiddleware:
                 # if image_path not in self.ipfs_cache or video_path not in self.ipfs_cache:
                 image_cid = self.ipfs.add(image_path)['Hash']
                 video_cid = self.ipfs.add(video_path)['Hash']
-                self.ipfs_cache[image_path] = image_cid
-                self.ipfs_cache[video_path] = video_cid
+                # self.ipfs_cache[image_path] = image_cid
+                # self.ipfs_cache[video_path] = video_cid
                 # else:
                 #     image_cid = self.ipfs_cache.get(image_path)
                 #     video_cid = self.ipfs_cache.get(video_path)

@@ -11,7 +11,7 @@ config = {
 }
 rcParams.update(config)
 
-x = [16, 32, 64, 128, 256, 512, 1024]
+x = [8, 16, 32, 64, 128, 256, 512]
 
 Mulchain_v_CPU_Time_BTC = [2.4256, 2.3633, 2.3155, 2.3315, 2.3282, 2.3318, 2.3231]
 Mulchain_o_CPU_Time_BTC = [2.3923, 2.3466, 2.3071, 2.3273, 2.3261, 2.3307, 2.3226]
@@ -35,8 +35,9 @@ axs[0].plot(x, Mulchain_v_CPU_Time_ETH, marker='D', linestyle='-', color='#6BB7C
 axs[0].set_xlabel('Number (Blocks)\n(a) Insert Cost', )
 axs[0].set_ylabel('CPU time (s)', )
 axs[0].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
-axs[0].set_xticks(x)  # 设置X轴刻度
-axs[0].set_xticklabels(x, )
+axs[0].set_xticks(x,
+                  ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
+# axs[0].set_xticklabels(x, )
 axs[0].set_yscale('linear')  # 设置y轴为对数尺度
 axs[0].set_yticks([2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6])
 # axs[0].set_yticklabels(['$10^{-0}$', '$10^{1}$'], )
@@ -73,18 +74,23 @@ axs[1].plot(x, Mulchain_bh_latency_ETH, marker='X', linestyle='-', color='#DBE0E
 
 axs[1].set_xlabel('Number (Blocks)\n(b) Latency', )
 axs[1].set_ylabel('Latency (s)', )
-# axs[1].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
+axs[1].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[1].set_yscale('log')  # 设置y轴为对数尺度
 axs[1].set_yticks([10 ** -2, 10 ** -1.5, 10 ** -1, 10 ** 0],
                   ['$10^{-2}$', '$10^{-1.5}$', '$10^{-1}$', '$10^{0}$'])
 axs[1].set_yticklabels(['$10^{-2}$', '$10^{-1.5}$', '$10^{-1}$', '$10^{0}$'], )
-axs[1].set_xticks(x)  # 设置X轴刻度
-axs[1].set_xticklabels(x, )
+axs[1].set_xticks(x,
+                  ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
+# axs[1].set_xticklabels(x, )
 axs[1].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.3), ncol=2)
 axs[1].grid(axis='y', linestyle='--', linewidth=0.7)
 
 # 子坐标系显示范围
 axins = axs[1].inset_axes((0.21, 0.71, 0.35, 0.28))
+axins.plot(x, Mulchain_o_latency_BTC, marker='o', linestyle='-', color='#C6B3D3',
+           label='MulChain$_{OB}$', markerfacecolor='none')
+axins.plot(x, Mulchain_o_latency_ETH, marker='s', linestyle='-', color='#80BA8A',
+           label='MulChain$_{OE}$', markerfacecolor='none')
 axins.plot(x, Mulchain_bt_latency_BTC, marker='v', linestyle='-', color='#ED9F9B',
            label='MulChain$_{BTB}$', markerfacecolor='none')
 axins.plot(x, Mulchain_bt_latency_ETH, marker='*', linestyle='-', color='#EEC79F',
@@ -93,7 +99,7 @@ axins.plot(x, Mulchain_bh_latency_BTC, marker='P', linestyle='-', color='#F1DFA4
            label='MulChain$_{BHB}$', markerfacecolor='none')
 axins.plot(x, Mulchain_bh_latency_ETH, marker='X', linestyle='-', color='#DBE0ED',
            label='MulChain$_{BHE}$', markerfacecolor='none')
-axins.set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
+# axins.set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 # axins.set_xticks(x)  # 设置X轴刻度
 # axins.set_yscale('log')  # 设置y轴为对数尺度
 zone_left = 4
@@ -147,8 +153,9 @@ axs[2].set_xlabel('Number (Blocks)\n(c) VO Size', )
 axs[2].set_ylabel('VO Size (KB)', )
 axs[2].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[2].set_yscale('log')  # 设置y轴为对数尺度
-axs[2].set_xticks(x)  # 设置X轴刻度
-axs[2].set_xticklabels(x, )
+axs[2].set_xticks(x,
+                  ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
+# axs[2].set_xticklabels(x, )
 axs[2].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=3)
 axs[2].grid(axis='y', linestyle='--', linewidth=0.7)
 

@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib import rcParams
-from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 
 config = {
     "font.family": 'serif',
@@ -19,7 +17,7 @@ Mulchain_v_CPU_Time_ETH = [2.3822, 2.3233, 2.3087, 2.3111, 2.3438, 2.3760, 2.387
 Mulchain_o_CPU_Time_ETH = [2.3657, 2.3150, 2.3046, 2.3090, 2.3428, 2.3755, 2.3875]
 
 # 创建图形和子图
-fig, axs = plt.subplots(1, 3, figsize=(21, 9), dpi=360)
+fig, axs = plt.subplots(1, 3, figsize=(21, 7), dpi=360)
 
 # 第1个子图：CPU Time vs Number (Blocks)
 axs[0].plot(x, Mulchain_o_CPU_Time_BTC, marker='o', linestyle='-', color='#C6B3D3',
@@ -35,11 +33,10 @@ axs[0].plot(x, Mulchain_v_CPU_Time_ETH, marker='D', linestyle='-', color='#6BB7C
 axs[0].set_xlabel('Number (Blocks)\n(a) Insert Cost', )
 axs[0].set_ylabel('CPU time (s)', )
 axs[0].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
-axs[0].set_xticks(x,
-                  ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
+axs[0].set_xticks(x, ['$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$', '$2^{10}$'])  # 设置X轴刻度
 axs[0].set_yscale('linear')  # 设置y轴为对数尺度
 axs[0].set_yticks([2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6])
-axs[0].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=2)
+# axs[0].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=2)
 axs[0].grid(axis='y', linestyle='--', linewidth=0.7)
 
 # 第2个子图：Latency vs Number (Blocks)
@@ -71,10 +68,9 @@ axs[1].set_yscale('log')  # 设置y轴为对数尺度
 axs[1].set_yticks([10 ** -2, 10 ** -1.5, 10 ** -1, 10 ** 0],
                   ['$10^{-2}$', '$10^{-1.5}$', '$10^{-1}$', '$10^{0}$'])
 axs[1].set_yticklabels(['$10^{-2}$', '$10^{-1.5}$', '$10^{-1}$', '$10^{0}$'], )
-axs[1].set_xticks(x,
-                  ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
+axs[1].set_xticks(x, ['$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$', '$2^{10}$'])  # 设置X轴刻度
 # axs[1].set_xticklabels(x, )
-axs[1].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=2)
+# axs[1].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=2)
 axs[1].grid(axis='y', linestyle='--', linewidth=0.7)
 
 # 子坐标系显示范围
@@ -134,15 +130,24 @@ axs[2].set_xlabel('Number (Blocks)\n(c) VO Size', )
 axs[2].set_ylabel('VO Size (KB)', )
 axs[2].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[2].set_yscale('log')  # 设置y轴为对数尺度
-axs[2].set_xticks(x,
-                  ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
+axs[2].set_xticks(x, ['$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$', '$2^{10}$'])  # 设置X轴刻度
 
-axs[2].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=2)
+# axs[2].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=2)
 axs[2].grid(axis='y', linestyle='--', linewidth=0.7)
-
+# 获取所有图例元素，并去重
+lines = []
+labels = []
+for ax in fig.axes:
+    axLine, axLabel = ax.get_legend_handles_labels()
+    for line, label in zip(axLine, axLabel):
+        if label not in labels:  # 检查是否已存在相同的label
+            lines.append(line)
+            labels.append(label)
+fig.legend(lines, labels,
+           loc='upper center',
+           ncol=6, bbox_to_anchor=(0.5, 1.0))  # 图例的位置，bbox_to_anchor=(0.5, 0.92),
 # 调整子图布局
-plt.tight_layout()
-
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 # 保存图表
 plt.savefig('../Figures/FuzzyQ_all.pdf', dpi=360)
 

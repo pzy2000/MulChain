@@ -55,7 +55,6 @@ contract MultiModalStorageManager {
 
     // 构造函数，初始化合约的greeting变量和根节点
     constructor() public {
-        greeting = 'Hello';
         // 初始化根节点为叶子节点且不是哈希节点
         rootId = nodeCount;
 
@@ -96,15 +95,6 @@ contract MultiModalStorageManager {
         return entryCount - 1;  // 返回新存储的条目ID
     }
 
-    // 设置greeting变量的值
-    function setGreeting(string memory _greeting) public {
-        greeting = _greeting;
-    }
-
-    // 返回greeting变量的值
-    function greet() view public returns (string memory) {
-        return greeting;
-    }
 
     // 查询数据的方法，传入条目ID，返回对应的数据条目
     function getData(uint256 _entryId) public view returns (string memory, string memory, string memory, string memory) {

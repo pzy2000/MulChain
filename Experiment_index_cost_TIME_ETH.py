@@ -7,7 +7,9 @@ from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
 from Logger.Logger import log_time_range
 from SQL_MiddleWare import SQLMiddleware, generate_random_times
+
 block_sizes = [8, 16, 32, 64, 128, 256, 512]
+
 
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
@@ -56,7 +58,6 @@ def main():
     tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     contract_instance = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
-
 
     # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
     df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)

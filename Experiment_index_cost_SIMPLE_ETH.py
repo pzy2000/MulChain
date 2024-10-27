@@ -3,7 +3,6 @@ import json
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
 from Logger.Logger import log_simple
 from SQL_MiddleWare import SQLMiddleware, block_sizes
 from global_w3 import w3

@@ -19,7 +19,7 @@ Mulchain_v_CPU_Time_ETH = [2.3930, 2.3608, 2.3076, 2.3047, 2.3190, 2.3378, 2.362
 Mulchain_o_CPU_Time_ETH = [2.3607, 2.3446, 2.2996, 2.3007, 2.3170, 2.3368, 2.3617]
 
 # 创建图形和子图
-fig, axs = plt.subplots(1, 3, figsize=(21, 9), dpi=360)
+fig, axs = plt.subplots(1, 3, figsize=(21, 7), dpi=360)
 
 # 第1个子图：CPU Time vs Number (Blocks)
 axs[0].plot(x, Mulchain_o_CPU_Time_BTC, marker='o', linestyle='-', color='#C6B3D3',
@@ -41,7 +41,7 @@ axs[0].set_xticks(x,
 axs[0].set_yscale('linear')  # 设置y轴为对数尺度
 axs[0].set_yticks([2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6])
 # axs[0].set_yticklabels(['$10^{-0}$', '$10^{1}$'], )
-axs[0].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=2)
+# axs[0].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.23), ncol=2)
 axs[0].grid(axis='y', linestyle='--', linewidth=0.7)
 
 # 第2个子图：Latency vs Number (Blocks)
@@ -82,7 +82,7 @@ axs[1].set_yticklabels(['$10^{-2}$', '$10^{-1.5}$', '$10^{-1}$', '$10^{0}$'], )
 axs[1].set_xticks(x,
                   ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
 # axs[1].set_xticklabels(x, )
-axs[1].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.3), ncol=2)
+# axs[1].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.3), ncol=3)
 axs[1].grid(axis='y', linestyle='--', linewidth=0.7)
 
 # 子坐标系显示范围
@@ -156,12 +156,23 @@ axs[2].set_yscale('log')  # 设置y轴为对数尺度
 axs[2].set_xticks(x,
                   ['$2^{3}$', '$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$', '$2^{8}$', '$2^{9}$'])  # 设置X轴刻度
 # axs[2].set_xticklabels(x, )
-axs[2].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.18), ncol=3)
+# axs[2].legend(fontsize=16, loc='upper center', bbox_to_anchor=(0.5, 1.23), ncol=3)
 axs[2].grid(axis='y', linestyle='--', linewidth=0.7)
+# 获取所有图例元素，并去重
+lines = []
+labels = []
+for ax in fig.axes:
+    axLine, axLabel = ax.get_legend_handles_labels()
+    for line, label in zip(axLine, axLabel):
+        if label not in labels:  # 检查是否已存在相同的label
+            lines.append(line)
+            labels.append(label)
 
+fig.legend(lines, labels,
+           loc='upper center',
+           ncol=4, bbox_to_anchor=(0.5, 1.02))  # 图例的位置，bbox_to_anchor=(0.5, 0.92),
 # 调整子图布局
-plt.tight_layout()
-
+plt.tight_layout(rect=[0, 0, 1, 0.9])
 # 保存图表
 plt.savefig('../Figures/TimeQ_all.pdf', dpi=360)
 

@@ -2,11 +2,9 @@ import hashlib
 import json
 import pickle
 from datetime import datetime
-
 import ipfshttpclient
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-
 from Logger.Logger import log_fuzzy
 from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_date
 
@@ -14,8 +12,6 @@ from SQL_MiddleWare import SQLMiddleware, block_sizes, generate_random_date
 def generate_text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
-
-# print(random_date)
 
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化

@@ -17,10 +17,10 @@ Mulchain_v_CPU_Time_ETH = [2.3822, 2.3233, 2.3087, 2.3111, 2.3438, 2.3760, 2.387
 Mulchain_o_CPU_Time_ETH = [2.3657, 2.3150, 2.3046, 2.3090, 2.3428, 2.3755, 2.3875]
 
 # 创建图形和子图
-fig, axs = plt.subplots(1, 4, figsize=(28, 7), dpi=360)
+fig, axs = plt.subplots(1, 4, figsize=(28, 6), dpi=360)
 
 # 第1个子图：CPU Time vs Number (Blocks)
-axs[0].plot(x, Mulchain_o_CPU_Time_BTC, marker='o', linestyle='-', color='yellow',
+axs[0].plot(x, Mulchain_o_CPU_Time_BTC, marker='o', linestyle='-', color='black',
             label='MulChain$_{OB}$', markerfacecolor='none', markersize=10, linewidth=3.0)
 axs[0].plot(x, Mulchain_o_CPU_Time_ETH, marker='s', linestyle='-', color='#33FF57',
             label='MulChain$_{OE}$', markerfacecolor='none', markersize=10, linewidth=3.0)
@@ -29,9 +29,9 @@ axs[0].plot(x, Mulchain_v_CPU_Time_BTC, marker='^', linestyle='-', color='#8B451
 axs[0].plot(x, Mulchain_v_CPU_Time_ETH, marker='D', linestyle='-', color='#A9A9A9',
             label='MulChain$_{VE}$', markerfacecolor='none', markersize=10, linewidth=3.0)
 
-# 设置第一个子图的坐标轴
-axs[0].set_xlabel('Number (Blocks)\n(a) Insert Cost', )
-axs[0].set_ylabel('CPU time (s)', )
+# 设置第1个子图的坐标轴
+axs[0].set_xlabel('Number (Blocks)\n(a) Index Construction Cost', fontsize=28)
+axs[0].set_ylabel('CPU time (s)', fontsize=32)
 axs[0].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[0].set_xticks(x)
 axs[0].set_xticklabels(['$2^{4}$', '$2^{5}$', '$2^{6}$', '$2^{7}$',
@@ -50,7 +50,7 @@ Mulchain_v_latency_ETH = [0.5325, 0.7084, 1.1328, 2.0620, 4.0100, 7.9133, 16.191
 Mulchain_Tr_latency_ETH = [0.2345, 0.2494, 0.2330, 0.2232, 0.3397, 0.4468, 0.8243]
 Mulchain_o_latency_ETH = [0.0839, 0.0987, 0.1120, 0.1289, 0.2434, 0.3640, 0.7355]
 
-axs[1].plot(x, Mulchain_o_latency_BTC, marker='o', linestyle='-', color='yellow',
+axs[1].plot(x, Mulchain_o_latency_BTC, marker='o', linestyle='-', color='black',
             label='MulChain$_{OB}$', markerfacecolor='none', markersize=10, linewidth=3.0)
 axs[1].plot(x, Mulchain_o_latency_ETH, marker='s', linestyle='-', color='#33FF57',
             label='MulChain$_{OE}$', markerfacecolor='none', markersize=10, linewidth=3.0)
@@ -63,8 +63,8 @@ axs[1].plot(x, Mulchain_Tr_latency_BTC, marker='v', linestyle='-', color='#A34CF
 axs[1].plot(x, Mulchain_Tr_latency_ETH, marker='*', linestyle='-', color='#4CFFFF',
             label='MulChain$_{TE}$', markerfacecolor='none', markersize=10, linewidth=3.0)
 
-axs[1].set_xlabel('Number (Blocks)\n(b) Latency', )
-axs[1].set_ylabel('Latency (s)', )
+axs[1].set_xlabel('Number (Blocks)\n(b) Latency', fontsize=32)
+axs[1].set_ylabel('Latency (s)', fontsize=32)
 axs[1].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[1].set_yscale('log')  # 设置y轴为对数尺度
 axs[1].set_yticks([10 ** -2, 10 ** -1, 10 ** 0],
@@ -91,9 +91,9 @@ axs[2].plot(x, Mulchain_Tr_VO_BTC, marker='v', linestyle='-', color='#A34CFF',
 axs[2].plot(x, Mulchain_Tr_VO_ETH, marker='*', linestyle='-', color='#4CFFFF',
             label='MulChain$_{TE}$', markerfacecolor='none', markersize=10, linewidth=3.0)
 
-# 设置第三个子图的坐标轴
-axs[2].set_xlabel('Number (Blocks)\n(c) VO Size', )
-axs[2].set_ylabel('VO Size (KB)', )
+# 设置第3个子图的坐标轴
+axs[2].set_xlabel('Number (Blocks)\n(c) VO Size', fontsize=32)
+axs[2].set_ylabel('VO Size (KB)', fontsize=32)
 axs[2].set_xscale('log', base=2)  # 设置x轴为对数尺度，底数为2
 axs[2].set_yscale('log')  # 设置y轴为对数尺度
 axs[2].set_xticks(x)
@@ -121,10 +121,10 @@ ax3_right = axs[3].twinx()
 ax3_right.plot(x, Latency_avg, marker='s', linestyle='--', color='red',
                label='Average Latency Ratio', markerfacecolor='none', markersize=10, linewidth=3.0)
 
-# 设置第四个子图的坐标轴
-axs[3].set_xlabel('Number (Blocks)\n(d) Average Ratios', )
-axs[3].set_ylabel('Average VO Size Ratio', color='blue')
-ax3_right.set_ylabel('Average Latency Ratio', color='red')
+# 设置第4个子图的坐标轴
+axs[3].set_xlabel('Number (Blocks)\n(d) Average Ratios', fontsize=32)
+axs[3].set_ylabel('VO Size Ratio', color='blue', fontsize=32)
+ax3_right.set_ylabel('Latency Ratio', color='red', fontsize=32)
 
 # 设置x轴为对数尺度，底数为2
 axs[3].set_xscale('log', base=2)
@@ -143,12 +143,10 @@ ax3_right.set_yticks([10 ** -2, 10 ** -1, 10 ** 0],
 # 设置y轴颜色
 axs[3].tick_params(axis='y', colors='blue')
 ax3_right.tick_params(axis='y', colors='red')
-# ax3_right.legend(loc='upper right')
 
 # 添加网格线
 axs[3].grid(axis='x', linestyle='--', linewidth=1.2)
 axs[3].grid(axis='y', linestyle='--', linewidth=1.2)
-# axs[3].legend(loc='upper right')
 
 # 获取所有图例元素，并去重
 lines = []
@@ -160,7 +158,7 @@ for ax in [axs[0], axs[1], axs[2]]:
             lines.append(line)
             labels.append(label)
 
-# 添加第四个子图的图例元素
+# 添加第4个子图的图例元素
 line1, label1 = axs[3].get_legend_handles_labels()
 line2, label2 = ax3_right.get_legend_handles_labels()
 lines.extend(line1 + line2)
@@ -169,10 +167,10 @@ labels.extend(label1 + label2)
 # 创建总的图例
 fig.legend(lines, labels,
            loc='upper center',
-           ncol=4, bbox_to_anchor=(0.5, 1.02))
+           ncol=4, bbox_to_anchor=(0.5, 1.03), fontsize=32)
 
 # 调整子图布局
-plt.tight_layout(rect=[0, 0, 1, 0.89])
+plt.tight_layout(rect=[0, 0, 1, 0.83])
 
 # 保存图表
 plt.savefig('../Figures/FuzzyQ_all.pdf', dpi=360)

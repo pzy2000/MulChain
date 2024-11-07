@@ -85,7 +85,7 @@ class SQLMiddleware:
         self.bloom_filter = BloomFilter(capacity=45000, error_rate=0.001)
         # 存储提前缓存的数据
         self.cached_data = {}
-        # self.ipfs_cache = {}
+        self.ipfs_cache = {}
         self.cached_path = {}
 
         # 初始化用于统计索引构建和区块生成的开销数据
@@ -139,8 +139,8 @@ class SQLMiddleware:
                 image_cid = self.ipfs.add(image_path)['Hash']
                 video_cid = self.ipfs.add(video_path)['Hash']
 
-                # self.ipfs_cache[image_path] = image_cid
-                # self.ipfs_cache[video_path] = video_cid
+                self.ipfs_cache[image_path] = image_cid
+                self.ipfs_cache[video_path] = video_cid
                 # else:
                 #     image_cid = self.ipfs_cache.get(image_path)
                 #     video_cid = self.ipfs_cache.get(video_path)
@@ -212,21 +212,23 @@ class SQLMiddleware:
                     data_btree = client.call(to_address, contract_abi, "getDataByTimeRange", [start_time, end_time])
                     wasted_time_on = 0
                     if data_btree[3]:
+                        print("results", results)
                         results.append({
                             "text_hash": data_btree[0],
                             "image_cid": data_btree[1],
                             "video_cid": data_btree[2],
                             "timestamp": data_btree[3]
                         })
-                        wasted_time_on_s = time.time()
-                        try:
-                            image_path = self.ipfs.get(data_btree[1], target=f"./cache/{data_btree[1]}")
-                            video_path = self.ipfs.get(data_btree[2], target=f"./cache/{data_btree[2]}")
-                        except Exception as e:
-                            print(e)
-                        wasted_time_on_e = time.time()
-                        wasted_time_on += wasted_time_on_e - wasted_time_on_s
-
+                    wasted_time_on_s = time.time()
+                    try:
+                        image_path = "../sample_image.jpg"  # 请替换为实际图片路径
+                        video_path = "../sample_video.mp4"  # 请替换为实际视频路径
+                        _ = self.ipfs.get(self.ipfs_cache[image_path], target=f"./cache/{self.ipfs_cache[image_path]}")
+                        _ = self.ipfs.get(self.ipfs_cache[video_path], target=f"./cache/{self.ipfs_cache[video_path]}")
+                    except Exception as e:
+                        print(e)
+                    wasted_time_on_e = time.time()
+                    wasted_time_on += wasted_time_on_e - wasted_time_on_s
                     select_end_time = time.time()
                     self.select_latency.append(select_end_time - select_start_time)
                     self.select_MulChain_o_latency.append(select_end_time - select_start_time - wasted_time_on)

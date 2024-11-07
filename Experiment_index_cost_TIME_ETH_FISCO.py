@@ -4,17 +4,12 @@ sys.path.append("../")
 sys.path.append("")
 sys.path.append("sdk/")
 sys.path.append(os.getcwd())
-import hashlib
-import pickle
+import pandas as pd
 from datetime import datetime
 import ipfshttpclient
 from tqdm import tqdm
 from SQL_MiddleWare_fisco import SQLMiddleware, generate_random_times
 block_sizes = [16, 32, 64, 128, 256, 512, 1024]
-
-
-def generate_text_hash(text):
-    return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
 def main():
@@ -25,26 +20,28 @@ def main():
     sql_middleware = SQLMiddleware(None, ipfs_client)
 
     # 逐步增加块的数量，从 256 到 16384
-    with open('../data_list.pkl', 'rb') as f:
-        data_list = pickle.load(f)
+    df = pd.read_csv('../0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
 
+    # 将数据转换为指定格式的列表，并格式化时间戳为 %Y-%m-%d
+    data_list = [
+        {
+            'hash': row['transactionHash'],
+            'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for _, row in df.iterrows()
+    ]
     time_stamp_list = []
     for data in data_list:
-        # 解析日期字符串为 datetime 对象
-        dt_object = datetime.strptime(data['time_stamp'], '%Y-%m-%d %H:%M:%S')
-        # 将 datetime 对象转换为日期字符串
-        formatted_date = dt_object.strftime('%Y-%m-%d %H:%M:%S')
-        # data['time_stamp'] = formatted_date
-        time_stamp_list.append(formatted_date)
-
+        time_stamp_list.append(data['time_stamp'])
     min_time = min(time_stamp_list)
     max_time = max(time_stamp_list)
+    min_time = datetime.strptime(str(min_time), '%Y-%m-%d %H:%M:%S')
+    max_time = datetime.strptime(str(max_time), '%Y-%m-%d %H:%M:%S')
     print("min_time:", min_time)
     print("max_time:", max_time)
-
     # 验证是否成功读取
-    print(f"Loaded {len(data_list)} items from data_list.pkl")
-    with open("../AAA_TIME_INDEX_COST_BTC_FISCO_BCOS" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+    print(f"Loaded {len(data_list)} items from data_list.csv")
+    with open("../AAA_TIME_INDEX_COST_ETH_FISCO_BCOS" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
@@ -62,11 +59,13 @@ def main():
             print(f"----- Starting select query for {block_size} blocks -----")
             for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 # 构建 SELECT 查询并调用 parse_query
-                a, b = generate_random_times(min_time, max_time)
+                a, b = generate_random_times(str(min_time), str(max_time))
                 select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
                 sql_middleware.parse_query(select_query)
+
             avg_MulChain_o_index_build_time = (sum(sql_middleware.MulChain_o_index_building_times) /
                                                len(sql_middleware.MulChain_o_index_building_times))
+
             avg_MulChain_o_select_latency = sum(sql_middleware.select_MulChain_o_latency) / len(
                 sql_middleware.select_MulChain_o_latency)
             avg_MulChain_BT_select_latency = sum(sql_middleware.select_latency) / len(sql_middleware.select_latency)
@@ -81,10 +80,9 @@ def main():
             fw.write(
                 f"MulChain_o Insert time for {block_size} blocks: {avg_MulChain_o_index_build_time:.4f} seconds")
             fw.write("\n")
-            print(
-                f"MulChain_Bt Select latency for {block_size} blocks: {avg_MulChain_BT_select_latency:.8f} seconds")
-            fw.write(
-                f"MulChain_Bt Select latency for {block_size} blocks: {avg_MulChain_BT_select_latency:.8f} seconds")
+
+            print(f"MulChain_Bt Select latency for {block_size} blocks: {avg_MulChain_BT_select_latency:.8f} seconds")
+            fw.write(f"MulChain_Bt Select latency for {block_size} blocks: {avg_MulChain_BT_select_latency:.8f} seconds")
             fw.write("\n")
 
             print(

@@ -14,7 +14,12 @@ block_sizes = [16, 32, 64, 128, 256, 512, 1024]
 
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化
-    ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+    try:
+        ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+    except Exception as e:
+        print(e)
+        print("IPFS Connect failed, plz check if ipfs is configured correctly and turned on")
+        ipfs_client = None
 
     # 部署合约
     sql_middleware = SQLMiddleware(None, ipfs_client)

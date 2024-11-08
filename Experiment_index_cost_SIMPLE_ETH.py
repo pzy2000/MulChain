@@ -14,7 +14,12 @@ def generate_text_hash(text):
 
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化
-    ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+    try:
+        ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+    except Exception as e:
+        print(e)
+        print("IPFS Connect failed, plz check if ipfs is configured correctly and turned on")
+        ipfs_client = None
 
     # 安装并设置 Solidity 编译器版本
     install_solc("0.8.20")

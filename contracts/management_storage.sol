@@ -127,8 +127,8 @@ contract MultiModalStorageManager {
                 uint256 key = rootNode.keys[i];
                 rootNode.hashDataEntries[key].push(rootNode.dataEntryIds[i]);
             }
-             rootNode.keys = new uint256 ; // 清空 keys 和 dataEntryIds
-             rootNode.dataEntryIds = new uint256 ;
+//             rootNode.keys = new uint256 [](0); // 清空 keys 和 dataEntryIds
+//             rootNode.dataEntryIds = new uint256 [](0);
         }
 
         // 插入到哈希节点

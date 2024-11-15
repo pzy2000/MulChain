@@ -1,5 +1,4 @@
 import numpy as np
-
 Mulchain_v_latency_BTC = [0.0888, 0.1165, 0.1896, 0.3443, 0.6559, 1.2873, 2.5559]
 Mulchain_bt_latency_BTC = [0.0371, 0.0349, 0.0341, 0.0344, 0.0343, 0.0345, 0.0346]
 Mulchain_bh_latency_BTC = [0.0335, 0.0330, 0.0322, 0.0328, 0.0329, 0.0327, 0.0333]
@@ -33,9 +32,8 @@ print("max_decre in VO Size (btc vs eth)", max_VO_size_decre)
 print("====================================================")
 
 for i in range(len(Mulchain_v_latency_BTC)):
-    tmp = np.true_divide(Mulchain_v_latency_BTC, Mulchain_o_latency_BTC)
-    # print("tmp", tmp)
-    avg_incre = np.average(tmp)
+    tmp_BTC = np.true_divide(Mulchain_v_latency_BTC, Mulchain_o_latency_BTC)
+    avg_incre = np.average(tmp_BTC)
 
 print("Latency average_incre", avg_incre)
 print("=================================")
@@ -46,11 +44,9 @@ Mulchain_v_VO_ETH = [98.2340, 98.2346, 98.2349, 98.2351, 98.2351, 98.2447, 98.24
 Mulchain_minus_BTC = [eth - btc for btc, eth in zip(Mulchain_v_VO_BTC, Mulchain_v_VO_ETH)]
 
 # 输出结果
-# print(Mulchain_minus_BTC)
 for i in range(len(Mulchain_v_latency_BTC)):
-    tmp = np.true_divide(Mulchain_minus_BTC, Mulchain_v_VO_ETH)
-    # print("tmp", tmp)
-    vo_avg_incre = np.average(tmp)
+    tmp_BTC = np.true_divide(Mulchain_minus_BTC, Mulchain_v_VO_ETH)
+    vo_avg_incre = np.average(tmp_BTC)
 
 print("VO Size average_incre in BTC vs ETH", vo_avg_incre)
 print("==================================================")
@@ -65,15 +61,10 @@ Mulchain_minus_BTC = [t - v for t, v in zip(Mulchain_t_VO_BTC, Mulchain_v_VO_BTC
 Mulchain_minus_ETH = [t - v for t, v in zip(Mulchain_t_VO_ETH, Mulchain_v_VO_ETH)]
 
 # 输出结果
-# print(Mulchain_minus_BTC)
-# for i in range(len(Mulchain_v_latency_BTC)):
-tmp = np.true_divide(Mulchain_minus_BTC, Mulchain_v_VO_BTC)
+tmp_BTC = np.true_divide(Mulchain_minus_BTC, Mulchain_v_VO_BTC)
 tmp_ETH = np.true_divide(Mulchain_minus_ETH, Mulchain_v_VO_ETH)
-tmp_all = np.concatenate((tmp, tmp_ETH))
-# print("tmp", tmp)
-# print("tmp_ETH", tmp_ETH)
-print("tmp_all", tmp_all)
-vo_avg_incre = np.average(tmp)
+tmp_all = np.concatenate((tmp_BTC, tmp_ETH))
+vo_avg_incre = np.average(tmp_BTC)
 vo_avg_incre_ETH = np.average(tmp_ETH)
 vo_avg_incre_all = np.average(tmp_all)
 
@@ -91,20 +82,17 @@ Mulchain_minus_BTC = [t - v for t, v in zip(Mulchain_Tr_latency_BTC, Mulchain_v_
 Mulchain_minus_ETH = [t - v for t, v in zip(Mulchain_Tr_latency_ETH, Mulchain_v_latency_ETH)]
 
 # 输出结果
-# for i in range(len(Mulchain_v_latency_BTC)):
-tmp = np.true_divide(Mulchain_minus_BTC, Mulchain_v_latency_BTC)
-# print("tmp", tmp)
+tmp_BTC = np.true_divide(Mulchain_minus_BTC, Mulchain_v_latency_BTC)
 tmp_ETH = np.true_divide(Mulchain_minus_ETH, Mulchain_v_latency_ETH)
-# print("tmp_ETH", tmp_ETH)
-latency_avg_incre = np.average(tmp)
-latency_max_incre = np.max(abs(tmp))
+latency_avg_incre_BTC = np.average(tmp_BTC)
+latency_max_incre_BTC = np.max(abs(tmp_BTC))
 latency_avg_incre_ETH = np.average(tmp_ETH)
 latency_max_incre_ETH = np.max(abs(tmp_ETH))
 
-print("latency average_incre in BTC", latency_avg_incre)
+print("latency average_incre in BTC", latency_avg_incre_BTC)
 print("latency average_incre in ETH", latency_avg_incre_ETH)
 
-print("latency max_incre in BTC", latency_max_incre)
+print("latency max_incre in BTC", latency_max_incre_BTC)
 print("latency max_incre in ETH", latency_max_incre_ETH)
 
 Mulchain_v_CPU_Time_BTC = [0.5347, 0.5273, 0.5204, 0.5178, 0.5157, 0.5148, 0.5145]

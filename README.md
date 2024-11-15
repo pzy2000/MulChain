@@ -1,65 +1,65 @@
-### README.md：DEPRECATED
+### MulChain
 
-DEPRECATED.TO BE UPDATED
+This is the official repo for our DASFAA2025 paper MulChain.
 
-#### 系统要求
-- 操作系统：Windows、Mac OS X 或 Linux
-- Python 3.7 或更高版本
-- 用于下载依赖项和与 IPFS 和以太坊网络交互的网络连接
+**WARNING**: This is an academic proof-of-concept prototype, and in particular has not received careful code review. This implementation is NOT ready for production use.
 
-#### 安装步骤
+#### System Requirements
+- Operating System: Windows, Mac OS X, or Linux
+- Python 3.7 or higher
+- Network connection for downloading dependencies and interacting with IPFS and Ethereum networks
 
-##### 1. 安装 Python 依赖
-你需要安装几个 Python 库来运行应用。打开你的终端或命令提示符，确保 Python 和 pip 可用，运行：
+#### Installation Steps
+
+##### 1. Install Python Dependencies
+You need to install several Python libraries to run the application. Open your terminal or command prompt, ensure Python and pip are available, and run:
 
 ```bash
 python --version
 pip --version
 ```
 
-如果 Python 和 pip 已安装，继续安装必要的 Python 库：
+If Python and pip are installed, proceed to install the necessary Python libraries:
 
 ```bash
 pip install -r requirements.txt
 pip install -U "web3[tester]"
 ```
 
-这些库允许与以太坊交互、处理图像和视频、以及创建图形用户界面。
+These libraries enable interaction with Ethereum, handle images and videos, and create the graphical user interface.
 
-##### 2. 安装 IPFS 桌面版
-为了管理和存储多媒体文件，你需要安装 IPFS 桌面版，它提供了与 IPFS 交互的简单界面：
+##### 2. Install IPFS Desktop
+To manage and store multimedia files, you need to install IPFS Desktop, which provides an easy interface for interacting with IPFS:
 
-- 从 [IPFS 桌面版 v0.13.2](https://github.com/ipfs/ipfs-desktop/releases/download/v0.13.2/IPFS-Desktop-Setup-0.13.2.exe) 下载 Windows 安装程序。
-- 请一定不要使用更新版本的IPFS!!!!!
-- 运行下载的安装程序并按照屏幕上的指示安装。
-- 安装完成后，运行 IPFS 桌面版。它会自动设置并启动一个 IPFS 节点。
+- Download the Windows installer for [IPFS Desktop v0.13.2](https://github.com/ipfs/ipfs-desktop/releases/download/v0.13.2/IPFS-Desktop-Setup-0.13.2.exe).
+- DO NOT use newer versions of IPFS!!!!
+- Run the downloaded installer and follow the on-screen instructions to install.
+- After installation, launch IPFS Desktop. It will automatically set up and start an IPFS node.
 
-##### 3. Solidity 编译器
-应用使用 Solidity 智能合约，需要 Solidity 编译器。使用以下命令安装 Solidity 编译器：
+##### 3. Solidity Compiler
+The application uses Solidity smart contracts, requiring the Solidity compiler. Install the Solidity compiler with the following command:
 
 ```bash
 pip install py-solc-x
 ```
 
-##### 4. 以太坊网络连接
-应用通过 Web3.py 库来连接到以太坊网络，默认使用内存中的测试网络。对于实际部署或使用真实交易进行测试，请配置 Web3.py 连接到公共测试网络或本地以太坊网络。
+##### 4. Ethereum Network Connection
+The application uses the Web3.py library to connect to the Ethereum network, defaulting to an in-memory test network. For actual deployment or testing with real transactions, configure Web3.py to connect to a public test network or a local Ethereum network.
 
-#### 运行应用
-所有依赖项安装完成后，你可以运行应用。导航到包含你脚本的目录并运行：
+#### Running the Application
+After installing all dependencies, you can run the application. Navigate to the directory containing your script and run:
 
 ```bash
 python deploy_contract_GUI.py
 ```
 
-将 `deploy_contract_GUI.py` 替换为你的 Python 脚本的名称。
+Replace `deploy_contract_GUI.py` with the name of your Python script.
 
-#### 使用方法
-- **上传并存储数据**：点击此按钮打开文件对话框，选择一个图像和一个视频。选定的文件将被上传到 IPFS，它们的元数据（哈希和 CID）将被存储在以太坊上。
-- **查询数据**：点击此按钮从以太坊区块链获取并显示存储文件的元数据。
+#### Usage
+- **Upload and Store Data**: Click this button to open a file dialog, select an image and a video. The selected files will be uploaded to IPFS, and their metadata (hashes and CIDs) will be stored on Ethereum.
+- **Query Data**: Click this button to retrieve and display the stored file metadata from the Ethereum blockchain.
 
-#### 故障排除
-- 确保在启动应用之前 IPFS 桌面版正在运行。
-- 检查 Python 控制台是否有任何错误消息，这可能表明网络连接或依赖问题。
-- 如果交易未能通过，验证以太坊测试网络是否正确配置并且是否有测试以太币。
-
-此应用提供了一个基本框架，用于整合区块链技术与多媒体数据管理，并展示了去中心化应用的潜力。根据具体用例和需求，可以进行调整和增强。
+#### Troubleshooting
+- Ensure IPFS Desktop is running before starting the application. (MulChain can run without IPFS with basic functionalities)
+- Check the Python console for any error messages, which may indicate network connection or dependency issues.
+- If a transaction fails, verify that the Ethereum test network is correctly configured and that you have test Ether.

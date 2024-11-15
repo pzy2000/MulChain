@@ -398,7 +398,6 @@ contract MultiModalStorageManager {
 
 
     // 辅助函数：返回有效字符
-
     function getValidChar(uint8 index) internal view returns (string memory) {
         require(index < 13, "Invalid index");
         return validChars[index];

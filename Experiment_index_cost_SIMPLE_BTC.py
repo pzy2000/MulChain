@@ -94,7 +94,7 @@ def main():
                 image_path = "sample_image.jpg"  # 请替换为实际图片路径
                 video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
-                print("text_hash", text_hash)
+                # print("text_hash", text_hash)
                 sql_middleware.parse_query(insert_query)
 
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):

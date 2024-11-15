@@ -13,7 +13,11 @@ import threading
 install_solc("0.8.20")
 set_solc_version("0.8.20")
 # 连接到IPFS和Web3
-client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
+try:
+    client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
+except Exception as e:
+    print(e)
+    print("IPFS Client not properly installed or u forgot to start it at all!")
 w3 = Web3(Web3.EthereumTesterProvider())
 w3.eth.default_account = w3.eth.accounts[0]
 with open("contracts/management_storage.sol", "r", encoding="utf-8") as file:

@@ -1,6 +1,5 @@
 from global_w3 import gas_per_kb
 
-
 def log_GAS(sql_middleware, fw, block_size):
     # 输出统计数据
     avg_MulChain_v_index_build_time = sum(sql_middleware.index_building_times) / len(

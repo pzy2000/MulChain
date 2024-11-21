@@ -1,11 +1,14 @@
 import hashlib
 import json
+from datetime import datetime
 import ipfshttpclient
+import pandas as pd
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-from Logger.Logger import log_simple
-from SQL_MiddleWare import SQLMiddleware, block_sizes
-from global_w3 import w3
+from Logger.Logger import log_time_range
+from SQL_MiddleWare import SQLMiddleware, generate_random_times
+
+block_sizes = [8, 16, 32, 64, 128, 256, 512]
 
 
 def generate_text_hash(text):
@@ -20,6 +23,7 @@ def main():
         print(e)
         print("IPFS Connect failed, plz check if ipfs is configured correctly and turned on")
         ipfs_client = None
+    from global_w3 import w3
 
     # 安装并设置 Solidity 编译器版本
     install_solc("0.8.20")
@@ -60,11 +64,8 @@ def main():
     contract_instance = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
-    import pandas as pd
-    from datetime import datetime
-
     # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
-    df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
+    df = pd.read_csv('../0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
 
     # 将数据转换为指定格式的列表，并格式化时间戳为 %Y-%m-%d
     data_list = [
@@ -75,14 +76,21 @@ def main():
         for _, row in df.iterrows()
     ]
     print(f"Loaded {len(data_list)} items from 0to999999_BlockTransaction.csv")
-
-    with open("AAA_SIMPLE_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+    time_stamp_list = []
+    for data in data_list:
+        time_stamp_list.append(data['time_stamp'])
+    min_time = min(time_stamp_list)
+    max_time = max(time_stamp_list)
+    print("min_time:", min_time)
+    print("max_time:", max_time)
+    with open("AAA_TIME_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):
             # entry_id = 0
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")
             fw.write("\n")
+            print(f"----- Starting insert query for {block_size} blocks -----")
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 text_hash = data_list[i]['hash']
                 time_stamp = data_list[i]['time_stamp']
@@ -91,12 +99,13 @@ def main():
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
                 sql_middleware.parse_query(insert_query)
 
-            for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
+            print(f"----- Starting select query for {block_size} blocks -----")
+            for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 # 构建 SELECT 查询并调用 parse_query
-                select_query = f"SELECT * FROM multimodal_data WHERE entry_id = {i}"
+                a, b = generate_random_times(min_time, max_time)
+                select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
                 sql_middleware.parse_query(select_query)
-
-            log_simple(sql_middleware, fw, block_size)
+            log_time_range(sql_middleware, fw, block_size)
 
 
 if __name__ == "__main__":

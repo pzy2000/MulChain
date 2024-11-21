@@ -1,8 +1,8 @@
 import os
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 sys.path.append("")
-sys.path.append("sdk/")
+sys.path.append("../sdk/")
 sys.path.append(os.getcwd())
 import pandas as pd
 from datetime import datetime
@@ -56,8 +56,8 @@ def main():
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 text_hash = data_list[i]['hash']
                 time_stamp = data_list[i]['time_stamp']
-                image_path = "../sample_image.jpg"  # 请替换为实际图片路径
-                video_path = "../sample_video.mp4"  # 请替换为实际视频路径
+                image_path = "sample_image.jpg"  # 请替换为实际图片路径
+                video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
                 sql_middleware.parse_query(insert_query)
 

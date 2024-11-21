@@ -2,13 +2,13 @@ import hashlib
 import json
 from datetime import datetime
 import ipfshttpclient
-import pandas as pd
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
-from Logger.Logger import log_time_range
-from SQL_MiddleWare import SQLMiddleware, generate_random_times
-
-block_sizes = [8, 16, 32, 64, 128, 256, 512]
+from Logger.Logger import log_simple
+from SQL_MiddleWare import SQLMiddleware, block_sizes
+import pickle
+import sys
+sys.path.append("..")
 
 
 def generate_text_hash(text):
@@ -64,48 +64,46 @@ def main():
     contract_instance = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
-    # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
-    df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
+    with open('data_list.pkl', 'rb') as f:
+        data_list = pickle.load(f)
 
-    # 将数据转换为指定格式的列表，并格式化时间戳为 %Y-%m-%d
-    data_list = [
-        {
-            'hash': row['transactionHash'],
-            'time_stamp': datetime.fromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H:%M:%S')
-        }
-        for _, row in df.iterrows()
-    ]
-    print(f"Loaded {len(data_list)} items from 0to999999_BlockTransaction.csv")
     time_stamp_list = []
     for data in data_list:
+        # 解析日期字符串为 datetime 对象
+        # dt_object = datetime.strptime(data['time_stamp'], '%Y-%m-%d %H:%M:%S')
+        # 将 datetime 对象转换为日期字符串
+        # formatted_date = dt_object.strftime('%Y-%m-%d')
+        # data['time_stamp'] = formatted_date
         time_stamp_list.append(data['time_stamp'])
+
     min_time = min(time_stamp_list)
     max_time = max(time_stamp_list)
     print("min_time:", min_time)
     print("max_time:", max_time)
-    with open("AAA_TIME_INDEX_COST_ETH" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
+
+    # 验证是否成功读取
+    print(f"Loaded {len(data_list)} items from data_list.pkl")
+
+    with open("AAA_SIMPLE_INDEX_COST_BTC" + str(datetime.now().strftime('%Y-%m-%d %H_%M_%S')), 'a+') as fw:
         for j in range(0, len(block_sizes)):
-            # entry_id = 0
             block_size = block_sizes[j]
             print(f"----- Starting test for {block_size} blocks -----")
             fw.write(f"----- Starting test for {block_size} blocks -----")
             fw.write("\n")
-            print(f"----- Starting insert query for {block_size} blocks -----")
             for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
                 text_hash = data_list[i]['hash']
                 time_stamp = data_list[i]['time_stamp']
                 image_path = "sample_image.jpg"  # 请替换为实际图片路径
                 video_path = "sample_video.mp4"  # 请替换为实际视频路径
                 insert_query = f"INSERT INTO multimodal_data (textHash, imageCID, videoCID, timestamp) VALUES ('{text_hash}', '{image_path}', '{video_path}', '{time_stamp}')"
+                # print("text_hash", text_hash)
                 sql_middleware.parse_query(insert_query)
 
-            print(f"----- Starting select query for {block_size} blocks -----")
-            for _ in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
-                # 构建 SELECT 查询并调用 parse_query
-                a, b = generate_random_times(min_time, max_time)
-                select_query = f"SELECT * FROM multimodal_data WHERE timestamp BETWEEN '{a}' AND '{b}'"
+            for i in tqdm(range(0 if j == 0 else block_sizes[j - 1], block_size)):
+                select_query = f"SELECT * FROM multimodal_data WHERE entry_id = {i}"
                 sql_middleware.parse_query(select_query)
-            log_time_range(sql_middleware, fw, block_size)
+
+            log_simple(sql_middleware, fw, block_size)
 
 
 if __name__ == "__main__":

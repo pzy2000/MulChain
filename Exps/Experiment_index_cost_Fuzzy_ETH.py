@@ -65,7 +65,7 @@ def main():
     sql_middleware = SQLMiddleware(contract_instance, ipfs_client)
 
     # 读取 CSV 文件的前 20000 行，同时只读取 "timestamp" 和 "transactionHash" 列
-    df = pd.read_csv('0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
+    df = pd.read_csv('../0to999999_BlockTransaction.csv', usecols=['timestamp', 'transactionHash'], nrows=6000)
 
     # 将数据转换为指定格式的列表，并格式化时间戳为 %Y-%m-%d
     data_list = [

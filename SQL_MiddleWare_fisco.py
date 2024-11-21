@@ -221,8 +221,8 @@ class SQLMiddleware:
                         })
                     wasted_time_on_s = time.time()
                     try:
-                        image_path = "../sample_image.jpg"  # 请替换为实际图片路径
-                        video_path = "../sample_video.mp4"  # 请替换为实际视频路径
+                        image_path = "sample_image.jpg"  # 请替换为实际图片路径
+                        video_path = "sample_video.mp4"  # 请替换为实际视频路径
                         _ = self.ipfs.get(self.ipfs_cache[image_path], target=f"./cache/{self.ipfs_cache[image_path]}")
                         _ = self.ipfs.get(self.ipfs_cache[video_path], target=f"./cache/{self.ipfs_cache[video_path]}")
                     except Exception as e:
@@ -458,7 +458,7 @@ class SQLMiddleware:
 
 
 if __name__ == '__main__':
-    with open('../data_list.pkl', 'rb') as f:
+    with open('data_list.pkl', 'rb') as f:
         data_list = pickle.load(f)
 
     time_stamp_list = []

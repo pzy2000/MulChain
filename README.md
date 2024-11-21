@@ -31,7 +31,7 @@ These libraries enable interaction with Ethereum, handle images and videos, and 
 ##### 2. Install IPFS Desktop
 To manage and store multimedia files, you need to install IPFS Desktop, which provides an easy interface for interacting with IPFS:
 
-- Download the Windows installer for [IPFS Desktop v0.13.2](https://github.com/ipfs/ipfs-desktop/releases/download/v0.13.2/IPFS-Desktop-Setup-0.13.2.exe).
+- Download the Windows installer for [IPFS Desktop v0.13.2](https://github.com/ipfs/ipfs-desktop/releases/download/v0.13.2/IPFS-Desktop-Setup-0.13.2.exe). For other OS, please visit https://github.com/ipfs/ipfs-desktop/releases/tag/v0.13.2 to download the corresponding version.
 - DO NOT use newer versions of IPFS!!!!
 - Run the downloaded installer and follow the on-screen instructions to install.
 - After installation, launch IPFS Desktop. It will automatically set up and start an IPFS node.
@@ -47,17 +47,17 @@ pip install py-solc-x
 The application uses the Web3.py library to connect to the Ethereum network, defaulting to an in-memory test network. For actual deployment or testing with real transactions, configure Web3.py to connect to a public test network or a local Ethereum network.
 
 #### Running the Application
-After installing all dependencies, you can run the application. Navigate to the directory containing your script and run:
+After installing all dependencies, you can run the application. Navigate to the directory containing your script and run: (use "-e" or "--experiment" to specify the exact experiment you wish to run, choices=["CSB", "CSE", "FCSB", "FCSE", "FBC", "FBCF", "FEC", "FECF", "ALL"], "ALL" means that all exps will be run sequentially)
 
 ```bash
-python deploy_contract_GUI.py
+python run_exp.py
 ```
 
-Replace `deploy_contract_GUI.py` with the name of your Python script.
+[//]: # (#### Usage)
 
-#### Usage
-- **Upload and Store Data**: Click this button to open a file dialog, select an image and a video. The selected files will be uploaded to IPFS, and their metadata (hashes and CIDs) will be stored on Ethereum.
-- **Query Data**: Click this button to retrieve and display the stored file metadata from the Ethereum blockchain.
+[//]: # (- **Upload and Store Data**: Click this button to open a file dialog, select an image and a video. The selected files will be uploaded to IPFS, and their metadata &#40;hashes and CIDs&#41; will be stored on Ethereum.)
+
+[//]: # (- **Query Data**: Click this button to retrieve and display the stored file metadata from the Ethereum blockchain.)
 
 #### Troubleshooting
 - Ensure IPFS Desktop is running before starting the application. (MulChain can run without IPFS with basic functionalities)

@@ -22,7 +22,7 @@ contract MultiModalStorageManager {
         uint256 entryId; // 如果是数据条目结束节点，记录entryId
         mapping(string => TrieNode) children; // 子节点映射，键为字符串
         string[] keys; // 存储所有子节点的键
-}
+    }
 
     // 根节点
     TrieNode private root;

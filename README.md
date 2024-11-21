@@ -46,7 +46,7 @@ pip install py-solc-x
 ##### 4. Ethereum Network Connection
 The application uses the Web3.py library to connect to the Ethereum network, defaulting to an in-memory test network. For actual deployment or testing with real transactions, configure Web3.py to connect to a public test network or a local Ethereum network.
 
-#### Running the Application
+#### Running the Experiments
 After installing all dependencies, you can run the application. Navigate to the directory containing your script and run: (use "-e" or "--experiment" to specify the exact experiment you wish to run, choices=["CSB", "CSE", "FCSB", "FCSE", "FBC", "FBCF", "FEC", "FECF", "ALL"], "ALL" means that all exps will be run sequentially)
 
 ```bash

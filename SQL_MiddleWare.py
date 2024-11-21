@@ -177,7 +177,6 @@ class SQLMiddleware:
                     # 如果缓存中没有符合条件的数据，则从区块链中查询
                     results = []
                     results1 = []
-                    # results2 = []
                     wasted_time = 0
                     wasted_time_s = time.time()
                     gas_b = self.contract.functions.getDataByTimeRange(start_time, end_time).estimate_gas(
@@ -187,7 +186,6 @@ class SQLMiddleware:
                     data_btree = self.contract.functions.getDataByTimeRange(start_time, end_time).call()
 
                     self.vo_btree_size_kb.append(gas_b / gas_per_kb)
-                    # print(f"VO Size: {gas_b / gas_per_kb:.4f} KB")
                     wasted_time_on = 0
                     if data_btree[3]:
                         results.append({

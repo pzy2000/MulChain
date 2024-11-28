@@ -23,9 +23,9 @@ def main():
     # Define the argument for the script selection with a default value
     parser.add_argument(
         "-e", "--experiment",
-        choices=["CSB", "CSE", "FCSB", "FCSE", "FBC", "FBCF", "FEC", "FECF", "ALL"],
-        default="ALL",  # Default value set to "CSB"
-        help="Specify the experiment to run: CSB, CSE, FCSB, FCSE, FBC, FBCF, FEC, FECF, or ALL. Default is CSB."
+        choices=["CSB", "CSE", "FCSB", "FCSE", "FTB", "FTBF", "FTE", "FTEF", "ALL"],
+        default="FTB",  # Default value set to "CSB"
+        help="Specify the experiment to run: CSB, CSE, FCSB, FCSE, FTB, FTBF, FTE, FTEF, or ALL. Default is CSB."
     )
 
     # Parse the arguments
@@ -37,10 +37,10 @@ def main():
         "CSE": "Exps/Experiment_index_cost_SIMPLE_ETH.py",
         "FCSB": "Exps/Experiment_index_cost_Fuzzy_BTC.py",
         "FCSE": "Exps/Experiment_index_cost_Fuzzy_ETH.py",
-        "FBC": "Exps/Experiment_index_cost_TIME_BTC.py",
-        "FBCF": "Exps/Experiment_index_cost_TIME_BTC_FISCO.py",
-        "FEC": "Exps/Experiment_index_cost_TIME_ETH.py",
-        "FECF": "Exps/Experiment_index_cost_TIME_ETH_FISCO.py"
+        "FTB": "Exps/Experiment_index_cost_TIME_BTC.py",
+        "FTBF": "Exps/Experiment_index_cost_TIME_BTC_FISCO.py",
+        "FTE": "Exps/Experiment_index_cost_TIME_ETH.py",
+        "FTEF": "Exps/Experiment_index_cost_TIME_ETH_FISCO.py"
     }
 
     # If the argument is 'ALL', run all scripts in the map

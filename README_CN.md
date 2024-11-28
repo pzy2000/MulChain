@@ -32,7 +32,7 @@ pip install -U "web3[tester]"
 为了管理和存储多媒体文件，你需要安装 IPFS 桌面版，它提供了与 IPFS 交互的简单界面：
 
 - 从 [IPFS 桌面版 v0.13.2](https://github.com/ipfs/ipfs-desktop/releases/download/v0.13.2/IPFS-Desktop-Setup-0.13.2.exe) 下载 Windows 安装程序。
-- 请一定不要使用更新版本的IPFS!!!!!
+- 不建议使用版本低于 v0.13.2 的 IPFS 桌面版。
 - 运行下载的安装程序并按照屏幕上的指示安装。
 - 安装完成后，运行 IPFS 桌面版。它会自动设置并启动一个 IPFS 节点。
 

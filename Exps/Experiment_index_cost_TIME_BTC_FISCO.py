@@ -7,7 +7,8 @@ sys.path.append(os.getcwd())
 import hashlib
 import pickle
 from datetime import datetime
-import ipfshttpclient
+from ipfshttpclient.client import Client
+
 from tqdm import tqdm
 from SQL_MiddleWare_fisco import SQLMiddleware, generate_random_times
 block_sizes = [16, 32, 64, 128, 256, 512, 1024]
@@ -20,7 +21,7 @@ def generate_text_hash(text):
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化
     try:
-        ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+        ipfs_client = Client('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
     except Exception as e:
         print(e)
         print("IPFS Connect failed, plz check if ipfs is configured correctly and turned on")

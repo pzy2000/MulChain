@@ -32,7 +32,7 @@ These libraries enable interaction with Ethereum, handle images and videos, and 
 To manage and store multimedia files, you need to install IPFS Desktop, which provides an easy interface for interacting with IPFS:
 
 - Download the Windows installer for [IPFS Desktop v0.13.2](https://github.com/ipfs/ipfs-desktop/releases/download/v0.13.2/IPFS-Desktop-Setup-0.13.2.exe). For other OS, please visit https://github.com/ipfs/ipfs-desktop/releases/tag/v0.13.2 to download the corresponding version.
-- DO NOT use newer versions of IPFS!!!!
+- IPFS Desktops with version newer than v0.13.2 are not recommended.
 - Run the downloaded installer and follow the on-screen instructions to install.
 - After installation, launch IPFS Desktop. It will automatically set up and start an IPFS node.
 

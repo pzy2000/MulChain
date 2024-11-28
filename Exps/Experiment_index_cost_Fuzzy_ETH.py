@@ -2,7 +2,7 @@ import hashlib
 import json
 from datetime import datetime
 
-import ipfshttpclient
+from ipfshttpclient.client import Client
 import pandas as pd
 from solcx import compile_standard, install_solc, set_solc_version
 from tqdm import tqdm
@@ -18,7 +18,7 @@ def generate_text_hash(text):
 def main():
     # 假设合约和 IPFS 客户端实例已被初始化
     try:
-        ipfs_client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
+        ipfs_client = Client('/ip4/127.0.0.1/tcp/5001')  # 替换为你的 IPFS 节点地址
     except Exception as e:
         print(e)
         print("IPFS Connect failed, plz check if ipfs is configured correctly and turned on")

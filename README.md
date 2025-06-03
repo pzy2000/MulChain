@@ -1,6 +1,6 @@
 ### MulChain
 
-This is the official repo for our TOSEM paper MulChain.
+This is the official repo for our EMSE paper MulChain.
 
 **WARNING**: This is an academic proof-of-concept prototype, and in particular has not received careful code review. This implementation is NOT ready for production use.
 
